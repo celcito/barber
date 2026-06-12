@@ -6,6 +6,7 @@ interface Agendamento {
   salao_id: string;
   cliente_nome: string;
   cliente_whatsapp: string;
+  cliente_email: string | null;
   inicio: string;
   servico_id: string;
   profissional_id: string | null;
@@ -13,6 +14,7 @@ interface Agendamento {
 
 interface NotificacoesConfig {
   lembretes_ativos: boolean;
+  lembretes_email_ativos?: boolean;
   intervalo_lembrete: number;
   template: string;
   notificar_dono: boolean;
@@ -22,6 +24,78 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
+
+async function sendEmailReminder(to: string, subject: string, html: string) {
+  const apiKey = Deno.env.get("RESEND_API_KEY");
+  const from = Deno.env.get("RESEND_FROM") || "Agenda Fácil <onboarding@resend.dev>";
+  if (!apiKey) return;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({ from, to, subject, html }),
+  });
+
+  if (!res.ok) console.error("[Reminder] Resend error:", await res.text());
+}
+
+function buildEmailHtml(
+  clienteNome: string,
+  servicoNome: string,
+  profissionalNome: string,
+  data: string,
+  horario: string,
+  salaoNome: string,
+) {
+  const cardStyle =
+    "background-color:#0d0e0f;border-radius:6px;padding:24px;margin-bottom:24px;";
+  const rowStyle =
+    "display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2a2c2e;";
+  const labelStyle =
+    "font-size:13px;color:#9a8f80;text-transform:uppercase;letter-spacing:0.06em;";
+  const valueStyle = "font-size:14px;color:#e8e4df;font-weight:600;";
+
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="background-color:#121414;font-family:'Hanken Grotesk',Arial,sans-serif;padding:40px 0;margin:0">
+  <table align="center" role="presentation" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background-color:#1a1c1e;border-radius:8px;overflow:hidden;">
+    <tr>
+      <td style="background-color:#0d0e0f;padding:32px 40px 24px;text-align:center;">
+        <h1 style="font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:#c5a059;margin:0 0 4px;letter-spacing:0.02em;">${salaoNome}</h1>
+        <p style="font-size:12px;color:#9a8f80;letter-spacing:0.15em;text-transform:uppercase;margin:0;">Lembrete de Agendamento</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:32px 40px;">
+        <p style="font-size:16px;color:#e8e4df;margin:0 0 20px;line-height:1.5;">Olá ${clienteNome},</p>
+        <p style="font-size:16px;color:#e8e4df;margin:0 0 20px;line-height:1.5;">Passando para lembrar que você tem um horário marcado conosco:</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="${cardStyle}width:100%;">
+          <tr><td style="${rowStyle}"><span style="${labelStyle}">Serviço</span><span style="${valueStyle}">${servicoNome}</span></td></tr>
+          <tr><td style="${rowStyle}"><span style="${labelStyle}">Profissional</span><span style="${valueStyle}">${profissionalNome}</span></td></tr>
+          <tr><td style="${rowStyle}"><span style="${labelStyle}">Data</span><span style="${valueStyle}">${data}</span></td></tr>
+          <tr><td style="display:flex;justify-content:space-between;padding:8px 0;"><span style="${labelStyle}">Horário</span><span style="${valueStyle}">${horario}</span></td></tr>
+        </table>
+        <p style="font-size:14px;color:#9a8f80;margin:0;line-height:1.5;">Chegue no horário para aproveitar ao máximo seu atendimento.</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:0 40px;"><hr style="border:none;border-top:1px solid #2a2c2e;"></td>
+    </tr>
+    <tr>
+      <td style="padding:24px 40px 32px;text-align:center;">
+        <p style="font-size:12px;color:#6b655c;margin:0 0 4px;line-height:1.6;">${salaoNome}</p>
+        <p style="font-size:12px;color:#6b655c;margin:0;line-height:1.6;">Esperamos por você!</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
 
 async function sendWhatsApp(phone: string, message: string) {
   const instanceId = Deno.env.get("ZAPI_INSTANCE_ID");
@@ -53,7 +127,7 @@ Deno.serve(async () => {
 
   const { data: agendamentos, error } = await supabase
     .from("agendamentos")
-    .select("id, salao_id, cliente_nome, cliente_whatsapp, inicio, servico_id, profissional_id")
+    .select("id, salao_id, cliente_nome, cliente_whatsapp, cliente_email, inicio, servico_id, profissional_id")
     .eq("status", "confirmado")
     .eq("lembrete_enviado", false)
     .gte("inicio", now.toISOString());
@@ -121,6 +195,23 @@ Deno.serve(async () => {
     });
 
     await sendWhatsApp(agendamento.cliente_whatsapp, message);
+
+    if (notifConfig.lembretes_email_ativos && agendamento.cliente_email) {
+      const emailHtml = buildEmailHtml(
+        agendamento.cliente_nome,
+        (servico as unknown as { nome: string })?.nome || "Serviço",
+        "",
+        dataFormatada,
+        horarioFormatado,
+        (salao as unknown as { nome: string })?.nome || "Salão",
+      );
+      await sendEmailReminder(
+        agendamento.cliente_email,
+        "⏰ Lembrete do seu horário",
+        emailHtml,
+      );
+    }
+
     sent++;
 
     await supabase

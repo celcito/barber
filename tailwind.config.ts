@@ -7,15 +7,7 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  safelist: [
-    // Cobre text-*, bg-*, border-*, hover:bg-* para todas as cores "on-*" e "surface-*"
-    // necessário pois essas classes aparecem em objetos JS (variantStyles, etc.)
-    // e o scanner estático do Tailwind não as detecta nesses contextos.
-    { pattern: /^text-(on-|inverse-)/, variants: ["hover", "active", "focus"] },
-    { pattern: /^bg-(on-|surface-)/, variants: ["hover", "active", "focus"] },
-    { pattern: /^border-(on-|outline)/, variants: ["hover", "focus"] },
-    { pattern: /^shadow-(card|elevated|barber)$/ },
-  ],
+
   theme: {
     extend: {
       fontFamily: {

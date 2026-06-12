@@ -54,7 +54,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md pt-20">
         <div className="text-center mb-10">
           <h1 className="font-headline-md text-headline-md text-primary mb-2">
-            {isSignUp ? "Criar Conta" : "Admin Login"}
+            {isSignUp ? "Criar Conta" : "Acesso Admin"}
           </h1>
           <p className="font-body-md text-body-md text-on-surface-variant">
             {isSignUp ? "Crie sua conta para começar" : "Acesse seu painel administrativo"}
@@ -68,12 +68,12 @@ export default function LoginPage() {
               <input
                 id="email"
                 type="email"
-                placeholder="Email"
+                placeholder="E-mail"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-none"
+                className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
               />
             </div>
             <div className="relative group">
@@ -86,7 +86,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete={isSignUp ? "new-password" : "current-password"}
-                className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-none"
+                className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
               />
             </div>
 
@@ -135,7 +135,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {!isSignUp && (
+        {!isSignUp && process.env.NODE_ENV === 'development' && (
           <div className="mt-6 p-4 rounded bg-surface-container-high border border-outline-variant text-center">
             <p className="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-2">Teste</p>
             <p className="font-label-sm text-label-sm text-on-surface-variant">

@@ -25,7 +25,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 const sizeStyles: Record<ButtonSize, string> = {
   sm: "px-4 py-2 font-label-sm text-label-sm gap-2",
   md: "px-6 py-3 font-label-md text-label-md gap-2.5",
-  lg: "px-8 py-4 font-label-md text-label-md gap-3 uppercase tracking-[0.05em]",
+  lg: "px-8 py-4 font-label-md text-label-md gap-3 uppercase tracking-wider",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -35,13 +35,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "relative inline-flex items-center justify-center font-body font-medium transition-all duration-200 transform-gpu will-change-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 rounded",
-          variantStyles[variant],
-          sizeStyles[size],
+          "btn",
+          `btn-${variant}`,
+          `btn-${size}`,
           className
         )}
         {...props}
-        style={{ color: '#412d00' }}
       >
         {loading && (
           <svg

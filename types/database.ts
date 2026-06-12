@@ -86,6 +86,35 @@ export interface Database {
           preco?: number;
         };
       };
+      profissional_horarios: {
+        Row: {
+          id: string;
+          profissional_id: string;
+          dia_semana: string;
+          aberto: boolean;
+          inicio: string;
+          fim: string;
+          criado_em: string;
+        };
+        Insert: {
+          id?: string;
+          profissional_id: string;
+          dia_semana: string;
+          aberto?: boolean;
+          inicio?: string;
+          fim?: string;
+          criado_em?: string;
+        };
+        Update: {
+          id?: string;
+          profissional_id?: string;
+          dia_semana?: string;
+          aberto?: boolean;
+          inicio?: string;
+          fim?: string;
+          criado_em?: string;
+        };
+      };
       horario_excessoes: {
         Row: {
           id: string;
@@ -123,6 +152,7 @@ export interface Database {
           servico_id: string;
           cliente_nome: string;
           cliente_whatsapp: string;
+          cliente_email: string | null;
           inicio: string;
           fim: string;
           status: "confirmado" | "pendente" | "cancelado";
@@ -136,6 +166,7 @@ export interface Database {
           servico_id: string;
           cliente_nome: string;
           cliente_whatsapp: string;
+          cliente_email?: string | null;
           inicio: string;
           fim: string;
           status?: "confirmado" | "pendente" | "cancelado";
@@ -149,6 +180,7 @@ export interface Database {
           servico_id?: string;
           cliente_nome?: string;
           cliente_whatsapp?: string;
+          cliente_email?: string | null;
           inicio?: string;
           fim?: string;
           status?: "confirmado" | "pendente" | "cancelado";

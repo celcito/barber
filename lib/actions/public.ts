@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { clienteSchema, DIAS_SEMANA_MAP } from "@/lib/schemas/agendamento";
 import { sendWhatsApp } from "@/lib/zapi";
+import { sendConfirmationEmail } from "@/lib/email";
 
 export async function getSalaoBySlug(slug: string) {
   const supabase = await createClient();
@@ -35,6 +36,12 @@ export async function getServicosPublic(salaoId: string) {
   return data ?? [];
 }
 
+export interface SlotDisponivel {
+  horario: string;
+  profissionalId?: string;
+  profissionalNome?: string;
+}
+
 export async function getProfissionaisPublic(salaoId: string) {
   const supabase = await createClient();
 
@@ -48,27 +55,37 @@ export async function getProfissionaisPublic(salaoId: string) {
   return data ?? [];
 }
 
-export async function getHorariosDisponiveis(
+async function getHorariosProfissional(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  salaoId: string,
+  profissionalId: string,
+  data: string
+) {
+  const { data: profHorarios } = await supabase
+    .from("profissional_horarios")
+    .select("dia_semana, aberto, inicio, fim")
+    .eq("profissional_id", profissionalId);
+
+  if (profHorarios && profHorarios.length > 0) {
+    const map: Record<string, { aberto: boolean; inicio: string; fim: string }> = {};
+    for (const h of profHorarios) {
+      map[h.dia_semana] = { aberto: h.aberto, inicio: h.inicio, fim: h.fim };
+    }
+    return map;
+  }
+
+  return null;
+}
+
+async function calcularSlotsParaProfissional(
+  supabase: Awaited<ReturnType<typeof createClient>>,
   salaoId: string,
   profissionalId: string | null,
   servicoId: string,
-  data: string
-) {
-  const supabase = await createClient();
-
-  const { data: salao } = await supabase
-    .from("saloes")
-    .select("config")
-    .eq("id", salaoId)
-    .single();
-
-  const config = (salao?.config ?? {}) as Record<string, unknown>;
-  const horariosConf = (config.horarios ?? {}) as Record<
-    string,
-    { aberto: boolean; inicio: string; fim: string }
-  >;
-  const intervalo = (config.intervalo ?? 30) as number;
-
+  data: string,
+  horariosConf: Record<string, { aberto: boolean; inicio: string; fim: string }>,
+  intervalo: number
+): Promise<SlotDisponivel[]> {
   const { data: servico } = await supabase
     .from("servicos")
     .select("duracao_min")
@@ -78,7 +95,6 @@ export async function getHorariosDisponiveis(
   if (!servico) return [];
 
   const duracaoMin = servico.duracao_min;
-
   const dataObj = new Date(data + "T12:00:00");
   const diaSemana = dataObj.getDay();
 
@@ -87,7 +103,7 @@ export async function getHorariosDisponiveis(
   )?.[0];
   if (!diaNome) return [];
 
-  const configDia = horariosConf[diaNome];
+  let configDia = horariosConf[diaNome];
   if (!configDia || !configDia.aberto) return [];
 
   const dataInicioDia = `${data}T00:00:00`;
@@ -101,9 +117,6 @@ export async function getHorariosDisponiveis(
 
   const excessosBloqueio = (excessos ?? []).filter(
     (e: { tipo: string }) => e.tipo === "bloqueado"
-  );
-  const excessosAbertos = (excessos ?? []).filter(
-    (e: { tipo: string }) => e.tipo === "aberto_excessao"
   );
 
   const { data: agendamentos } = await supabase
@@ -132,25 +145,11 @@ export async function getHorariosDisponiveis(
     });
   }
 
-  const periodosAbertura = [{ inicio: abertura, fim: fechamento }];
-  for (const exc of excessosAbertos) {
-    const excInicio = new Date(exc.data_inicio).getTime();
-    const excFim = new Date(exc.data_fim).getTime();
-    if (new Date(exc.data_inicio).toISOString().slice(0, 10) === data) {
-      periodosAbertura.push({ inicio: excInicio, fim: excFim });
-    }
-  }
-
   const slots: string[] = [];
-
-  for (const periodo of periodosAbertura) {
-    let current = periodo.inicio;
-    while (current + duracaoMin * 60000 <= periodo.fim) {
-      const slotFim = current + duracaoMin * 60000;
-      if (slotIsBloqueado(current, slotFim)) {
-        current += intervalo * 60000;
-        continue;
-      }
+  let current = abertura;
+  while (current + duracaoMin * 60000 <= fechamento) {
+    const slotFim = current + duracaoMin * 60000;
+    if (!slotIsBloqueado(current, slotFim)) {
       const conflito = ocupados.some(
         (o) => current < o.fim && slotFim > o.inicio
       );
@@ -164,11 +163,92 @@ export async function getHorariosDisponiveis(
           })
         );
       }
-      current += intervalo * 60000;
+    }
+    current += intervalo * 60000;
+  }
+
+  return Array.from(new Set(slots)).sort().map((horario) => ({ horario }));
+}
+
+export async function getHorariosDisponiveis(
+  salaoId: string,
+  profissionalId: string | null,
+  servicoId: string,
+  data: string
+): Promise<SlotDisponivel[]> {
+  const supabase = await createClient();
+
+  const { data: salao } = await supabase
+    .from("saloes")
+    .select("config")
+    .eq("id", salaoId)
+    .single();
+
+  const config = (salao?.config ?? {}) as Record<string, unknown>;
+  const horariosConf = (config.horarios ?? {}) as Record<
+    string,
+    { aberto: boolean; inicio: string; fim: string }
+  >;
+  const intervalo = (config.intervalo ?? 30) as number;
+
+  const dataObj = new Date(data + "T12:00:00");
+  const diaSemana = dataObj.getDay();
+  const diaNome = Object.entries(DIAS_SEMANA_MAP).find(
+    ([, v]) => v === diaSemana
+  )?.[0];
+  if (!diaNome) return [];
+
+  if (profissionalId) {
+    const profHorarios = await getHorariosProfissional(supabase, salaoId, profissionalId, data);
+    const horariosUsar = profHorarios ?? horariosConf;
+
+    if (!horariosUsar[diaNome] || !horariosUsar[diaNome].aberto) return [];
+
+    return calcularSlotsParaProfissional(
+      supabase, salaoId, profissionalId, servicoId, data,
+      horariosUsar, intervalo
+    );
+  }
+
+  const { data: profissionais } = await supabase
+    .from("profissionais")
+    .select("id, nome")
+    .eq("salao_id", salaoId)
+    .eq("ativo", true)
+    .order("nome");
+
+  if (!profissionais || profissionais.length === 0) return [];
+
+  const slotMap = new Map<string, { profissionalId: string; profissionalNome: string }>();
+
+  for (const prof of profissionais) {
+    const profHorarios = await getHorariosProfissional(supabase, salaoId, prof.id, data);
+    const horariosUsar = profHorarios ?? horariosConf;
+
+    if (!horariosUsar[diaNome] || !horariosUsar[diaNome].aberto) continue;
+
+    const profSlots = await calcularSlotsParaProfissional(
+      supabase, salaoId, prof.id, servicoId, data,
+      horariosUsar, intervalo
+    );
+
+    for (const slot of profSlots) {
+      if (!slotMap.has(slot.horario)) {
+        slotMap.set(slot.horario, {
+          profissionalId: prof.id,
+          profissionalNome: prof.nome,
+        });
+      }
     }
   }
 
-  return slots.filter((s, i, a) => a.indexOf(s) === i).sort();
+  return Array.from(slotMap.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([horario, info]) => ({
+      horario,
+      profissionalId: info.profissionalId,
+      profissionalNome: info.profissionalNome,
+    }));
 }
 
 export async function createAgendamento(formData: FormData) {
@@ -177,6 +257,7 @@ export async function createAgendamento(formData: FormData) {
   const parsed = clienteSchema.safeParse({
     nome: formData.get("nome"),
     whatsapp: formData.get("whatsapp"),
+    email: formData.get("email") || undefined,
   });
 
   if (!parsed.success) {
@@ -240,6 +321,7 @@ export async function createAgendamento(formData: FormData) {
       servico_id: servicoId,
       cliente_nome: parsed.data.nome,
       cliente_whatsapp: parsed.data.whatsapp,
+      cliente_email: parsed.data.email || null,
       inicio: inicio.toISOString(),
       fim: fim.toISOString(),
       status: "confirmado",
@@ -287,6 +369,18 @@ export async function createAgendamento(formData: FormData) {
     sendWhatsApp(parsed.data.whatsapp, msgCliente),
     ...(salao?.whatsapp ? [sendWhatsApp(salao.whatsapp, msgDono)] : []),
   ]).catch((err) => console.error("[WhatsApp] Send error:", err));
+
+  if (parsed.data.email) {
+    sendConfirmationEmail({
+      to: parsed.data.email,
+      clienteNome: parsed.data.nome,
+      servicoNome: servico.nome,
+      profissionalNome,
+      data: dataFormatada,
+      horario: horarioFormatado,
+      salaoNome: salao?.nome || "Salão",
+    }).catch((err) => console.error("[Email] Send error:", err));
+  }
 
   revalidatePath(`/${formData.get("slug")}`);
   return { success: true, agendamento: novoAgendamento };

@@ -202,7 +202,7 @@ export default function ConfiguracoesPage() {
       <div className="max-w-container-max mx-auto">
         <header className="mb-stack-lg flex justify-between items-end">
           <div>
-            <h2 className="font-headline-md text-headline-md text-on-surface mb-2">Settings</h2>
+            <h2 className="font-headline-md text-headline-md text-on-surface mb-2">Configurações</h2>
             <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl">
               Gerencie o funcionamento da barbearia, canais de comunicação e preferências globais.
             </p>
@@ -237,7 +237,7 @@ export default function ConfiguracoesPage() {
                     name="nome"
                     defaultValue={salao?.nome || ""}
                     required
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="Ex: The Grooming Ritual"
                   />
                 </div>
@@ -255,7 +255,7 @@ export default function ConfiguracoesPage() {
                       required
                       pattern="[a-z0-9-]+"
                       title="Apenas letras minúsculas, números e hífens"
-                      className="w-full bg-transparent text-on-surface py-3 pr-3 focus:ring-0 outline-none"
+                      className="w-full bg-transparent text-on-surface py-3 pr-3 focus:ring-0 outline-hidden"
                       placeholder="minha-barbearia"
                     />
                   </div>
@@ -343,7 +343,7 @@ export default function ConfiguracoesPage() {
                   <input
                     name="endereco_logradouro"
                     defaultValue={endereco.logradouro || ""}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="Av. Paulista"
                   />
                 </div>
@@ -355,7 +355,7 @@ export default function ConfiguracoesPage() {
                   <input
                     name="endereco_numero"
                     defaultValue={endereco.numero || ""}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="1000"
                   />
                 </div>
@@ -367,7 +367,7 @@ export default function ConfiguracoesPage() {
                   <input
                     name="endereco_complemento"
                     defaultValue={endereco.complemento || ""}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="Sala 42, Bloco B"
                   />
                 </div>
@@ -379,7 +379,7 @@ export default function ConfiguracoesPage() {
                   <input
                     name="endereco_bairro"
                     defaultValue={endereco.bairro || ""}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="Bela Vista"
                   />
                 </div>
@@ -391,7 +391,7 @@ export default function ConfiguracoesPage() {
                   <input
                     name="endereco_cidade"
                     defaultValue={endereco.cidade || ""}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="São Paulo"
                   />
                 </div>
@@ -403,7 +403,7 @@ export default function ConfiguracoesPage() {
                   <input
                     name="endereco_estado"
                     defaultValue={endereco.estado || ""}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="SP"
                     maxLength={2}
                   />
@@ -417,7 +417,7 @@ export default function ConfiguracoesPage() {
                     name="endereco_cep"
                     defaultValue={endereco.cep || ""}
                     onChange={handleCepChange}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="01310-100"
                     maxLength={9}
                   />
@@ -445,7 +445,7 @@ export default function ConfiguracoesPage() {
                     <input
                       name="whatsapp"
                       defaultValue={salao?.whatsapp || ""}
-                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-none"
+                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
                       placeholder="+55 (11) 99999-9999"
                     />
                   </div>
@@ -491,7 +491,7 @@ export default function ConfiguracoesPage() {
                     <input
                       name="rede_instagram"
                       defaultValue={redesSociais.instagram || ""}
-                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-none"
+                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
                       placeholder="@suabarbearia"
                     />
                   </div>
@@ -506,7 +506,7 @@ export default function ConfiguracoesPage() {
                     <input
                       name="rede_facebook"
                       defaultValue={redesSociais.facebook || ""}
-                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-none"
+                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
                       placeholder="facebook.com/suabarbearia"
                     />
                   </div>
@@ -521,7 +521,7 @@ export default function ConfiguracoesPage() {
                     <input
                       name="rede_tiktok"
                       defaultValue={redesSociais.tiktok || ""}
-                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-none"
+                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
                       placeholder="@suabarbearia"
                     />
                   </div>
@@ -536,7 +536,7 @@ export default function ConfiguracoesPage() {
                     <input
                       name="rede_website"
                       defaultValue={redesSociais.website || ""}
-                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-none"
+                      className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
                       placeholder="https://suabarbearia.com.br"
                     />
                   </div>
@@ -552,7 +552,7 @@ export default function ConfiguracoesPage() {
               <select
                 name="intervalo"
                 defaultValue={((salao?.config?.intervalo ?? 30) as number).toString()}
-                className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
               >
                 <option value="15">15 minutos</option>
                 <option value="20">20 minutos</option>
@@ -603,7 +603,7 @@ export default function ConfiguracoesPage() {
                   <select
                     name="intervalo_lembrete"
                     defaultValue={notifConfig.intervalo_lembrete.toString()}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                   >
                     <option value="60">1 hora antes</option>
                     <option value="120">2 horas antes</option>
@@ -618,7 +618,7 @@ export default function ConfiguracoesPage() {
                     name="template"
                     defaultValue={notifConfig.template}
                     rows={3}
-                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-none resize-none"
+                    className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden resize-none"
                   />
                   <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">
                     Variáveis: {`{{nome}}, {{horario}}, {{servico}}, {{salao}}`}
@@ -654,7 +654,7 @@ export default function ConfiguracoesPage() {
                     <div key={exc.id} className="flex items-center justify-between p-4 rounded bg-surface-container border border-outline-variant">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${exc.tipo === "bloqueado" ? "bg-error" : "bg-primary"}`} />
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${exc.tipo === "bloqueado" ? "bg-error" : "bg-primary"}`} />
                           <span className="font-label-md text-label-md text-on-surface">
                             {exc.tipo === "bloqueado" ? "Bloqueado" : "Aberto (exceção)"}
                           </span>
@@ -687,7 +687,7 @@ export default function ConfiguracoesPage() {
 
         {excessoOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setExcessoOpen(false)} />
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-xs" onClick={() => setExcessoOpen(false)} />
             <div className="relative bg-surface-container border border-outline-variant p-stack-lg max-w-md w-full rounded">
               <h3 className="font-headline-md text-headline-md text-primary mb-stack-md">Nova Exceção</h3>
               <form onSubmit={handleAddExcesso} className="space-y-4">
@@ -696,7 +696,7 @@ export default function ConfiguracoesPage() {
                   <select
                     name="tipo"
                     required
-                    className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none py-3 px-4 transition-all text-on-surface"
+                    className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-hidden py-3 px-4 transition-all text-on-surface"
                   >
                     <option value="bloqueado">Bloqueado (indisponível)</option>
                     <option value="aberto_excessao">Aberto (fora do horário)</option>
@@ -706,28 +706,28 @@ export default function ConfiguracoesPage() {
                   <div>
                     <label className="font-label-md text-label-md text-on-surface-variant block mb-2">Data início</label>
                     <input type="date" name="data_inicio" required
-                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none py-3 px-4 transition-all text-on-surface" />
+                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-hidden py-3 px-4 transition-all text-on-surface" />
                   </div>
                   <div>
                     <label className="font-label-md text-label-md text-on-surface-variant block mb-2">Hora início</label>
                     <input type="time" name="hora_inicio" required defaultValue="09:00"
-                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none py-3 px-4 transition-all text-on-surface" />
+                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-hidden py-3 px-4 transition-all text-on-surface" />
                   </div>
                   <div>
                     <label className="font-label-md text-label-md text-on-surface-variant block mb-2">Data fim</label>
                     <input type="date" name="data_fim" required
-                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none py-3 px-4 transition-all text-on-surface" />
+                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-hidden py-3 px-4 transition-all text-on-surface" />
                   </div>
                   <div>
                     <label className="font-label-md text-label-md text-on-surface-variant block mb-2">Hora fim</label>
                     <input type="time" name="hora_fim" required defaultValue="19:00"
-                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none py-3 px-4 transition-all text-on-surface" />
+                      className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-hidden py-3 px-4 transition-all text-on-surface" />
                   </div>
                 </div>
                 <div>
                   <label className="font-label-md text-label-md text-on-surface-variant block mb-2">Descrição</label>
                   <input type="text" name="descricao" placeholder="Ex: Feriado, manutenção..."
-                    className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-none py-3 px-4 transition-all text-on-surface" />
+                    className="w-full bg-surface-container-highest border-b-2 border-outline focus:border-primary outline-hidden py-3 px-4 transition-all text-on-surface" />
                 </div>
                 <div className="flex justify-end gap-4 mt-stack-lg">
                   <button type="button" onClick={() => setExcessoOpen(false)}

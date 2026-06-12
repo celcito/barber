@@ -7,6 +7,7 @@ import { StepService } from "./step-service";
 import { StepProfessional } from "./step-professional";
 import { StepDate } from "./step-date";
 import { StepTime } from "./step-time";
+import type { SlotDisponivel } from "@/lib/actions/public";
 import { StepClient } from "./step-client";
 import { BookingConfirmation } from "./booking-confirmation";
 
@@ -37,14 +38,15 @@ interface BookingData {
   horario: string | null;
   clienteNome: string;
   clienteWhatsapp: string;
+  clienteEmail: string;
 }
 
 const steps: Step[] = [
-  { id: "servico", label: "Choose Service" },
-  { id: "profissional", label: "Select Barber" },
-  { id: "data", label: "Date" },
-  { id: "horario", label: "Time" },
-  { id: "cliente", label: "Details" },
+  { id: "servico", label: "Serviço" },
+  { id: "profissional", label: "Barbeiro" },
+  { id: "data", label: "Data" },
+  { id: "horario", label: "Horário" },
+  { id: "cliente", label: "Dados" },
 ];
 
 export function BookingFlow({ salao }: { salao: SalaoData }) {
@@ -56,6 +58,7 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
     horario: null,
     clienteNome: "",
     clienteWhatsapp: "",
+    clienteEmail: "",
   });
   const [confirmed, setConfirmed] = useState(false);
   const [agendamentoId, setAgendamentoId] = useState<string | null>(null);
@@ -145,8 +148,14 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
                 profissionalId={booking.profissional?.id ?? null}
                 selectedDate={booking.data ?? ""}
                 selectedTime={booking.horario}
-                onSelect={(horario) => {
-                  updateBooking("horario", horario);
+                onSelect={(slot: SlotDisponivel) => {
+                  updateBooking("horario", slot.horario);
+                  if (slot.profissionalId && !booking.profissional) {
+                    updateBooking("profissional", {
+                      id: slot.profissionalId,
+                      nome: slot.profissionalNome ?? "",
+                    });
+                  }
                   setTimeout(nextStep, 400);
                 }}
               />
@@ -161,9 +170,11 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
                 horario={booking.horario ?? ""}
                 clienteNome={booking.clienteNome}
                 clienteWhatsapp={booking.clienteWhatsapp}
-                onUpdateCliente={(nome, whatsapp) => {
+                clienteEmail={booking.clienteEmail}
+                onUpdateCliente={(nome, whatsapp, email) => {
                   updateBooking("clienteNome", nome);
                   updateBooking("clienteWhatsapp", whatsapp);
+                  if (email !== undefined) updateBooking("clienteEmail", email);
                 }}
                 onConfirmed={handleConfirmed}
               />
@@ -172,22 +183,22 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
 
           <div className="lg:col-span-5 h-full">
             <div className="bg-surface-container-high p-stack-md rounded-lg border border-primary/30 shadow-xl h-full flex flex-col">
-              <h3 className="font-headline-sm text-headline-sm text-primary mb-stack-sm">Ritual Summary</h3>
+              <h3 className="font-headline-sm text-headline-sm text-primary mb-stack-sm">Resumo do Ritual</h3>
               <div className="space-y-3 mb-stack-md">
                 <div className="flex justify-between items-start">
-                  <span className="font-label-sm text-label-sm text-on-surface-variant">Service</span>
+                  <span className="font-label-sm text-label-sm text-on-surface-variant">Serviço</span>
                   <span key={booking.servico?.id || 'empty'} className="font-label-md text-label-md text-on-surface text-right animate-fade-in">
                     {booking.servico?.nome || "—"}
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
-                  <span className="font-label-sm text-label-sm text-on-surface-variant">Barber</span>
+                  <span className="font-label-sm text-label-sm text-on-surface-variant">Barbeiro</span>
                   <span key={booking.profissional?.id || 'empty'} className="font-label-md text-label-md text-on-surface text-right animate-fade-in">
                     {booking.profissional?.nome || "—"}
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
-                  <span className="font-label-sm text-label-sm text-on-surface-variant">Date & Time</span>
+                  <span className="font-label-sm text-label-sm text-on-surface-variant">Data & Horário</span>
                   <span key={`${booking.data}-${booking.horario}`} className="font-label-md text-label-md text-on-surface text-right animate-fade-in">
                     {booking.data && booking.horario
                       ? `${new Date(booking.data).toLocaleDateString("pt-BR")} ${booking.horario}`
@@ -206,30 +217,30 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
                 <button
                   type="submit"
                   form="cliente-form"
-                  className="w-full py-4 bg-primary text-on-primary font-label-md text-label-md uppercase tracking-widest rounded-sm hover:brightness-110 active:scale-[0.98] transition-all shadow-card"
+                  className="w-full py-4 bg-primary text-on-primary font-label-md text-label-md uppercase tracking-widest rounded-xs hover:brightness-110 active:scale-[0.98] transition-all shadow-card"
                 >
-                  Confirm Agendamento
+                  Confirmar Agendamento
                 </button>
               ) : (
                 <button
                   disabled
-                  className="w-full py-4 bg-surface-container-highest text-on-surface-variant font-label-md text-label-md uppercase tracking-widest rounded-sm opacity-50 cursor-not-allowed"
+                  className="w-full py-4 bg-surface-container-highest text-on-surface-variant font-label-md text-label-md uppercase tracking-widest rounded-xs opacity-50 cursor-not-allowed"
                 >
-                  Complete Details
+                  Complete os Dados
                 </button>
               )}
 
               <p className="text-center font-label-sm text-label-sm text-on-surface-variant mt-4 italic">
-                No payment required now. Pay after your ritual.
+                Nenhum pagamento é necessário agora. Pague após o seu ritual.
               </p>
 
               <div className="flex-1 min-h-[150px] relative mt-6 rounded overflow-hidden">
                 <img
                   src="/images/hero-bg.webp"
-                  alt="Grooming Ritual"
+                  alt="Ritual de Cuidado"
                   className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 mix-blend-luminosity hover:opacity-80 transition-opacity duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-surface-container-high via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-surface-container-high via-transparent to-transparent" />
               </div>
             </div>
           </div>

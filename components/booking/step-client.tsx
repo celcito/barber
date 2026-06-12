@@ -13,7 +13,8 @@ interface StepClientProps {
   horario: string;
   clienteNome: string;
   clienteWhatsapp: string;
-  onUpdateCliente: (nome: string, whatsapp: string) => void;
+  clienteEmail: string;
+  onUpdateCliente: (nome: string, whatsapp: string, email?: string) => void;
   onConfirmed: (agendamentoId: string) => void;
 }
 
@@ -34,6 +35,7 @@ export function StepClient({
   horario,
   clienteNome,
   clienteWhatsapp,
+  clienteEmail,
   onUpdateCliente,
   onConfirmed,
 }: StepClientProps) {
@@ -92,7 +94,7 @@ export function StepClient({
           id="nome"
           value={clienteNome}
           onChange={(e) =>
-            onUpdateCliente(e.target.value, clienteWhatsapp)
+            onUpdateCliente(e.target.value, clienteWhatsapp, clienteEmail)
           }
           error={errors.nome?.[0]}
           required
@@ -105,11 +107,22 @@ export function StepClient({
           value={clienteWhatsapp}
           onChange={(e) => {
             const formatted = formatWhatsApp(e.target.value);
-            onUpdateCliente(clienteNome, formatted);
+            onUpdateCliente(clienteNome, formatted, clienteEmail);
           }}
           error={errors.whatsapp?.[0]}
           helperText="Informe seu WhatsApp para receber a confirmação"
           required
+        />
+        <Input
+          label="E-mail (opcional)"
+          name="email"
+          id="email"
+          type="email"
+          value={clienteEmail}
+          onChange={(e) =>
+            onUpdateCliente(clienteNome, clienteWhatsapp, e.target.value)
+          }
+          error={errors.email?.[0]}
         />
 
         <div className="flex items-start gap-3 pt-4">
@@ -121,7 +134,7 @@ export function StepClient({
             className="mt-0.5 w-4 h-4 rounded border-outline bg-transparent text-primary focus:ring-primary focus:ring-offset-surface cursor-pointer shrink-0"
           />
           <label htmlFor="lgpd-consent" className="font-body-sm text-[12px] text-on-surface-variant leading-relaxed cursor-pointer select-none">
-            Concordo com o uso dos meus dados (Nome e WhatsApp) para fins de agendamento, comunicação sobre o serviço e gestão de atendimento, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+            Concordo com o uso dos meus dados (Nome, WhatsApp e E-mail) para fins de agendamento, comunicação sobre o serviço e gestão de atendimento, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
           </label>
         </div>
       </form>

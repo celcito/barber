@@ -44,7 +44,7 @@ export default function ClientesPage() {
               placeholder="Buscar cliente..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-surface-container border border-outline-variant rounded-full pl-10 pr-4 py-2 text-on-surface focus:border-primary outline-none transition-colors font-body-sm"
+              className="w-full bg-surface-container border border-outline-variant rounded-full pl-10 pr-4 py-2 text-on-surface focus:border-primary outline-hidden transition-colors font-body-sm"
             />
           </div>
         </header>
@@ -79,7 +79,7 @@ export default function ClientesPage() {
                     <tr key={cliente.whatsapp} className="hover:bg-surface-container-highest/30 transition-colors group">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center font-headline-sm text-primary uppercase flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center font-headline-sm text-primary uppercase shrink-0">
                             {cliente.nome.charAt(0)}
                           </div>
                           <div>

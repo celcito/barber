@@ -17,7 +17,7 @@ function Skeleton({ className, variant = "text", ...props }: SkeletonProps) {
       )}
       {...props}
     >
-      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+      <div className="absolute inset-0 animate-shimmer bg-linear-to-r from-transparent via-white/5 to-transparent" />
     </div>
   );
 }

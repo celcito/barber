@@ -91,7 +91,7 @@ export function StepProfessional({
               <span className="material-symbols-outlined text-primary text-[32px]">auto_awesome</span>
             </div>
             {noPreferenceSelected && (
-              <div className="absolute bottom-0 right-0 bg-primary w-6 h-6 rounded-full flex items-center justify-center border-2 border-surface shadow-sm">
+              <div className="absolute bottom-0 right-0 bg-primary w-6 h-6 rounded-full flex items-center justify-center border-2 border-surface shadow-xs">
                 <span className="material-symbols-outlined text-surface text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
               </div>
             )}
@@ -142,7 +142,7 @@ export function StepProfessional({
                   </div>
                 )}
                 {isSelected && (
-                  <div className="absolute bottom-0 right-0 bg-primary w-6 h-6 rounded-full flex items-center justify-center border-2 border-surface shadow-sm">
+                  <div className="absolute bottom-0 right-0 bg-primary w-6 h-6 rounded-full flex items-center justify-center border-2 border-surface shadow-xs">
                     <span className="material-symbols-outlined text-surface text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
                   </div>
                 )}

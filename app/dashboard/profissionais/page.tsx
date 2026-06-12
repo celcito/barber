@@ -55,7 +55,7 @@ export default function ProfissionaisPage() {
         <header className="flex justify-between items-end mb-stack-lg">
           <div>
             <span className="font-label-md text-label-md text-primary tracking-[0.2em] uppercase">Gestão de Pessoas</span>
-            <h2 className="font-headline-md text-headline-md text-on-surface mt-2">Team</h2>
+            <h2 className="font-headline-md text-headline-md text-on-surface mt-2">Equipe</h2>
             <p className="font-body-md text-body-md text-on-surface-variant mt-1">{profissionais.length} Barbeiros</p>
           </div>
           <Button onClick={handleCreate} icon={<span className="material-symbols-outlined text-[20px]">person_add</span>}>

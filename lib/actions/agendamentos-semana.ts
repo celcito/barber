@@ -40,3 +40,16 @@ export async function getProfissionais() {
 
   return data ?? [];
 }
+
+export async function getSalaoConfig() {
+  const { supabase, user } = await getAuthUser();
+  if (!user) redirect("/login");
+
+  const { data } = await supabase
+    .from("saloes")
+    .select("config")
+    .eq("id", user.id)
+    .single();
+
+  return (data?.config ?? {}) as Record<string, unknown>;
+}

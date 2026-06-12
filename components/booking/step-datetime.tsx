@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getHorariosDisponiveis } from "@/lib/actions/public";
+import { getHorariosDisponiveis, type SlotDisponivel } from "@/lib/actions/public";
 import { cn } from "@/lib/utils";
 
 interface StepDatetimeProps {
@@ -72,7 +72,7 @@ export function StepDatetime({
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
-  const [slots, setSlots] = useState<string[]>([]);
+  const [slots, setSlots] = useState<SlotDisponivel[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
   const calendarDays = useMemo(
@@ -198,19 +198,22 @@ export function StepDatetime({
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {slots.map((slot) => {
-                const isSelected = selectedTime === slot;
+                const isSelected = selectedTime === slot.horario;
                 return (
                   <button
-                    key={slot}
-                    onClick={() => onSelect(selectedDate, slot)}
+                    key={slot.horario}
+                    onClick={() => onSelect(selectedDate, slot.horario)}
                     className={cn(
-                      "py-2 rounded font-label-sm text-label-sm transition-all",
+                      "py-2 rounded font-label-sm text-label-sm transition-all flex flex-col items-center cursor-pointer",
                       isSelected
                         ? "border border-primary bg-primary/10 text-primary"
                         : "border border-outline-variant hover:border-primary hover:text-primary text-on-surface"
                     )}
                   >
-                    {slot}
+                    <span>{slot.horario}</span>
+                    {slot.profissionalNome && (
+                      <span className="text-[10px] opacity-70 mt-0.5">{slot.profissionalNome}</span>
+                    )}
                   </button>
                 );
               })}

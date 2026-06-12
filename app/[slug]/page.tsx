@@ -88,7 +88,7 @@ export default async function PublicBookingPage({ params }: PageProps) {
         <div className="fixed inset-0 z-0">
           <Image 
             src="/images/hero-bg.webp" 
-            alt="Barber Shop Interior" 
+            alt="Interior da Barbearia" 
             fill 
             className="object-cover"
             priority
@@ -104,9 +104,9 @@ export default async function PublicBookingPage({ params }: PageProps) {
         
         <main className="relative z-10 pt-32 flex-1">
           <div className="max-w-container-max mx-auto px-margin-desktop mb-stack-lg">
-            <h1 className="font-display-lg text-display-lg text-primary max-w-2xl mb-base">Schedule Your Ritual</h1>
+            <h1 className="font-display-lg text-display-lg text-primary max-w-2xl mb-base">Agende Seu Ritual</h1>
             <p className="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
-              Premium grooming is more than a service; it's a dedicated moment of refinement. Secure your seat with our master artisans.
+              Um corte premium é mais que um serviço; é um momento dedicado ao seu cuidado. Garanta seu horário com nossos mestres artesãos.
             </p>
           </div>
 
@@ -119,12 +119,12 @@ export default async function PublicBookingPage({ params }: PageProps) {
           <div className="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-stack-md">
             <span className="font-headline-sm text-headline-sm text-primary uppercase tracking-widest">{salao.nome}</span>
             <p className="font-body-md text-body-md text-on-surface-variant text-center md:text-left">
-              © 2024 The Grooming Ritual. Handcrafted Grooming.
+              © 2024 AgendaFácil. Cuidado Artesanal.
             </p>
             <div className="flex gap-stack-md">
-              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
-              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
-              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Política de Privacidade</a>
+              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Termos de Uso</a>
+              <a className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Contato</a>
             </div>
           </div>
         </footer>

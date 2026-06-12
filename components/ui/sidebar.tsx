@@ -54,7 +54,7 @@ function Sidebar({ items, activeHref, brandName = "AgendaFácil", onLogout }: Si
               )}
             >
               {item.icon && (
-                <span className="w-5 h-5 flex-shrink-0">{item.icon}</span>
+                <span className="w-5 h-5 shrink-0">{item.icon}</span>
               )}
               {item.label}
             </a>

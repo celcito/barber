@@ -50,7 +50,7 @@ function SlideOver({ open, onClose, title, children, className }: SlideOverProps
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
         className={cn(
-          "absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-500",
+          "absolute inset-0 bg-background/80 backdrop-blur-xs transition-opacity duration-500",
           visible ? "opacity-100" : "opacity-0"
         )}
         onClick={handleClose}

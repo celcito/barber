@@ -76,13 +76,13 @@ export function BookingConfirmation({
         {/* Main Content */}
         <main className="px-stack-lg py-stack-lg">
           {/* Hero Image */}
-          <div className="mb-stack-md relative h-48 w-full overflow-hidden rounded-sm group">
+          <div className="mb-stack-md relative h-48 w-full overflow-hidden rounded-xs group">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxuE0GrvUrccuvIkBcnWU5bKKLkbIjlmk0igXEnQrJLwDgMdRhiBOGZDXD7PKF43VDFwVwgxXgNW9vguV_jcmNNumBiEE1pK39_zRgff8WZS-vxEav14tinBrbAmVnwHs1Rq61vRfNSqgCUHZde6K0pSHTgsmvSC1AB69GM1Dd1UX01BfZpMVq63Yl2PUO5mVCjNIocBV73M41Um9D0GuMmBSCTjEheIqUS2zPCTGDYyWAHfyexNzDIFRAyKtGrl1Ei3HwA6uUFtiV"
-              alt="The Grooming Ritual Atmosphere" 
+              alt="Atmosfera do Ritual de Cuidado" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-surface-container-lowest to-transparent opacity-60"></div>
           </div>
 
           {/* Greeting */}
@@ -96,7 +96,7 @@ export function BookingConfirmation({
           </div>
 
           {/* Details Card */}
-          <div className="bg-surface-container p-stack-md rounded-sm border border-outline-variant/50 relative overflow-hidden">
+          <div className="bg-surface-container p-stack-md rounded-xs border border-outline-variant/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <span className="material-symbols-outlined text-6xl text-primary">content_cut</span>
             </div>
@@ -125,16 +125,16 @@ export function BookingConfirmation({
               href={googleCalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-primary text-on-primary py-4 rounded-sm font-label-md text-label-md uppercase tracking-widest hover:brightness-110 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+              className="w-full bg-primary text-on-primary py-4 rounded-xs font-label-md text-label-md uppercase tracking-widest hover:brightness-110 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg cursor-pointer"
             >
               <span className="material-symbols-outlined text-lg">calendar_add_on</span>
               Adicionar ao Calendário
             </a>
             <button 
               onClick={() => window.location.href = '/'}
-              className="w-full bg-transparent border border-outline-variant text-on-surface-variant py-4 rounded-sm font-label-md text-label-md uppercase tracking-widest hover:border-primary hover:text-primary transition-all duration-300 active:scale-[0.98] cursor-pointer"
+              className="w-full bg-transparent border border-outline-variant text-on-surface-variant py-4 rounded-xs font-label-md text-label-md uppercase tracking-widest hover:border-primary hover:text-primary transition-all duration-300 active:scale-[0.98] cursor-pointer"
             >
-              Fazer novo agendamento
+              Novo Agendamento
             </button>
           </div>
 

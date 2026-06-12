@@ -85,7 +85,7 @@ export default function AssinarPage() {
                 icon={<span className="material-symbols-outlined text-[20px]">auto_awesome</span>}
                 className="w-full"
               >
-                Começar Trial Grátis
+                Começar Teste Grátis
               </Button>
 
               {error && (
@@ -103,7 +103,7 @@ export default function AssinarPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((feat) => (
                 <div key={feat.label} className="flex items-center gap-3 p-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-primary text-[18px]">{feat.icon}</span>
                   </div>
                   <span className="font-body-md text-body-md text-on-surface">{feat.label}</span>

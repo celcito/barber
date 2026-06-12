@@ -12,6 +12,7 @@ interface DashboardSidebarProps {
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
   { label: "Agenda", href: "/dashboard/agenda", icon: "calendar_month" },
+  { label: "Horários", href: "/dashboard/agenda-profissionais", icon: "schedule" },
   { label: "Serviços", href: "/dashboard/servicos", icon: "content_cut" },
   { label: "Profissionais", href: "/dashboard/profissionais", icon: "group" },
   { label: "Clientes", href: "/dashboard/clientes", icon: "contacts" },
@@ -48,12 +49,12 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
           <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
         </div>
         <div>
-          <h2 className="font-headline-sm text-headline-sm text-on-surface tracking-wide">The Shop</h2>
-          <p className="font-label-sm text-label-sm text-primary uppercase tracking-widest mt-1">Admin Management</p>
+          <h2 className="font-headline-sm text-headline-sm text-on-surface tracking-wide">{salaoNome}</h2>
+          <p className="font-label-sm text-label-sm text-primary uppercase tracking-widest mt-1">Administração</p>
         </div>
       </div>
 
-      <div className="mt-stack-lg space-y-base flex-grow">
+      <div className="mt-stack-lg space-y-base">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -64,7 +65,7 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
               className={cn(
                 "flex items-center gap-stack-sm px-stack-sm py-3 rounded-lg transition-all duration-200 font-label-md text-label-md",
                 isActive
-                  ? "bg-primary-container text-[#4e3700] font-bold"
+                  ? "bg-primary-container text-[#4e3700]"
                   : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest"
               )}
             >
@@ -76,7 +77,10 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
       </div>
 
       <div className="border-t border-outline-variant pt-stack-md space-y-base mb-base">
-        <button className="w-full py-3 px-base bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:brightness-110 active:scale-95 transform-gpu will-change-transform transition-all">
+        <button
+          onClick={() => { router.push("/dashboard/agenda/novo"); handleClose(); }}
+          className="w-full py-3 px-base bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:brightness-110 active:scale-95 transform-gpu will-change-transform transition-all"
+        >
           <span className="material-symbols-outlined text-[18px] mr-2" style={{ verticalAlign: "middle" }}>add</span>
           Novo Agendamento
         </button>
@@ -92,7 +96,7 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
           className="flex items-center gap-stack-sm w-full px-stack-sm py-3 text-on-surface-variant hover:text-error hover:bg-surface-container-highest rounded-lg transition-all font-label-md text-label-md"
         >
           <span className="material-symbols-outlined">logout</span>
-          Logout
+Sair
         </button>
       </div>
     </nav>
@@ -115,7 +119,7 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-background/80 backdrop-blur-xs"
             onClick={handleClose}
           />
           <div className="relative w-64 h-full bg-surface-container border-r border-outline-variant animate-slide-in-right">

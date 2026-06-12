@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getHorariosDisponiveis } from "@/lib/actions/public";
+import { getHorariosDisponiveis, type SlotDisponivel } from "@/lib/actions/public";
 import { cn } from "@/lib/utils";
 
 interface StepTimeProps {
@@ -11,12 +11,12 @@ interface StepTimeProps {
   profissionalId: string | null;
   selectedDate: string;
   selectedTime: string | null;
-  onSelect: (horario: string) => void;
+  onSelect: (slot: SlotDisponivel) => void;
 }
 
 const MESES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
 
 function formatMonthShort(dateStr: string) {
@@ -34,7 +34,7 @@ export function StepTime({
   selectedTime,
   onSelect,
 }: StepTimeProps) {
-  const [slots, setSlots] = useState<string[]>([]);
+  const [slots, setSlots] = useState<SlotDisponivel[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export function StepTime({
 
       <div className="flex-1">
         <p className="font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">
-          Available slots for {formatMonthShort(selectedDate)}
+          Horários disponíveis para {formatMonthShort(selectedDate)}
         </p>
 
         {loadingSlots ? (
@@ -72,19 +72,24 @@ export function StepTime({
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {slots.map((slot) => {
-              const isSelected = selectedTime === slot;
+              const isSelected = selectedTime === slot.horario;
               return (
                 <button
-                  key={slot}
+                  key={slot.horario}
                   onClick={() => onSelect(slot)}
                   className={cn(
-                    "py-2 rounded font-label-sm text-label-sm transition-all",
+                    "py-2 rounded font-label-sm text-label-sm transition-all flex flex-col items-center cursor-pointer",
                     isSelected
                       ? "border border-primary bg-primary/10 text-primary"
                       : "border border-outline-variant hover:border-primary hover:text-primary text-on-surface"
                   )}
                 >
-                  {slot}
+                  <span>{slot.horario}</span>
+                  {slot.profissionalNome && (
+                    <span className="text-[10px] opacity-70 mt-0.5">
+                      {slot.profissionalNome}
+                    </span>
+                  )}
                 </button>
               );
             })}

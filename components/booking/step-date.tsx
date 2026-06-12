@@ -8,10 +8,10 @@ interface StepDateProps {
   onSelect: (data: string) => void;
 }
 
-const DIAS_SEMANA_ABREV = ["S", "M", "T", "W", "T", "F", "S"];
+const DIAS_SEMANA_ABREV = ["D", "S", "T", "Q", "Q", "S", "S"];
 const MESES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
 
 function generateCalendarDays(year: number, month: number) {

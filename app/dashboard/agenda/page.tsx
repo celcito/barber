@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { SlideOver } from "@/components/ui/slide-over";
 import { EmptyState } from "@/components/ui/empty-state";
 import { AgendamentoDetalhes } from "@/components/features/agendamento-detalhes";
-import { getAgendamentosSemana, getProfissionais } from "@/lib/actions/agendamentos-semana";
+import { getAgendamentosSemana, getProfissionais, getSalaoConfig } from "@/lib/actions/agendamentos-semana";
 
 interface Agendamento {
   id: string;
@@ -59,6 +59,7 @@ export default function AgendaPage() {
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
   const [profissionais, setProfissionais] = useState<Profissional[]>([]);
   const [loading, setLoading] = useState(true);
+  const [horarios, setHorarios] = useState<{ min: number; max: number } | null>(null);
   const [selectedAgendamento, setSelectedAgendamento] = useState<Agendamento | null>(null);
   const [slideOpen, setSlideOpen] = useState(false);
 
@@ -69,12 +70,24 @@ export default function AgendaPage() {
 
   async function loadData() {
     setLoading(true);
-    const [agData, profData] = await Promise.all([
+    const [agData, profData, configData] = await Promise.all([
       getAgendamentosSemana(weekStart.toISOString(), profissionalFiltro || undefined),
       getProfissionais(),
+      getSalaoConfig(),
     ]);
     setAgendamentos(agData as Agendamento[]);
     setProfissionais(profData as Profissional[]);
+    const horariosConf = (configData?.horarios ?? {}) as Record<string, { aberto: boolean; inicio: string; fim: string }>;
+    let minH = 23, maxH = 0;
+    for (const day of Object.values(horariosConf)) {
+      if (day.aberto) {
+        const sh = parseInt(day.inicio.split(":")[0]);
+        const eh = parseInt(day.fim.split(":")[0]);
+        if (sh < minH) minH = sh;
+        if (eh > maxH) maxH = eh;
+      }
+    }
+    setHorarios(minH < 23 && maxH > 0 ? { min: minH, max: maxH } : null);
     setLoading(false);
   }
 
@@ -114,14 +127,23 @@ export default function AgendaPage() {
     + " - "
     + weekDates.dates[6].toLocaleDateString("pt-BR", { day: "numeric", month: "short", year: "numeric" });
 
-  const horas = Array.from({ length: 12 }, (_, i) => `${String(i + 7).padStart(2, "0")}:00`);
+  const agora = new Date();
+  const horaAtual = agora.getHours();
+
+  const horas = horarios
+    ? Array.from({ length: horarios.max - horarios.min }, (_, i) => `${String(i + horarios.min).padStart(2, "0")}:00`)
+        .filter((h) => {
+          const horaNum = parseInt(h.split(":")[0]);
+          return horaNum >= horaAtual;
+        })
+    : [];
 
   return (
     <div className="p-margin-desktop pt-24 lg:pt-margin-desktop">
       <div className="max-w-container-max mx-auto">
         <header className="flex items-center justify-between mb-stack-lg">
           <div>
-            <h1 className="font-headline-md text-headline-md text-on-surface">Schedule</h1>
+            <h1 className="font-headline-md text-headline-md text-on-surface">Agenda</h1>
             <p className="font-body-md text-body-md text-on-surface-variant">Visão semanal dos agendamentos</p>
           </div>
           <div className="flex items-center gap-stack-sm">

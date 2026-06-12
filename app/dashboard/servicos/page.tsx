@@ -53,7 +53,7 @@ export default function ServicosPage() {
         <header className="flex justify-between items-end mb-stack-lg">
           <div>
             <span className="font-label-md text-label-md text-primary tracking-[0.2em] uppercase">Gestão de Catálogo</span>
-            <h2 className="font-headline-md text-headline-md text-on-surface mt-2">Services</h2>
+            <h2 className="font-headline-md text-headline-md text-on-surface mt-2">Serviços</h2>
           </div>
           <div className="flex gap-gutter">
             <Button onClick={handleCreate} icon={<span className="material-symbols-outlined text-[20px]">add</span>}>
@@ -85,7 +85,7 @@ export default function ServicosPage() {
                 key={servico.id}
                 className="flex items-center justify-between group hover:bg-surface-container-highest/50 p-4 -mx-4 transition-all border-b border-outline-variant/30"
               >
-                <div className="flex-grow">
+                <div className="grow">
                   <div className="flex items-center">
                     <span className="font-headline-sm text-[20px] text-on-surface">{servico.nome}</span>
                     <span className="dotted-leader" />
