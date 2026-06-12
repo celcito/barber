@@ -47,19 +47,6 @@ npm run dev
 
 Abra [http://localhost:3000](http://localhost:3000) para ver o resultado.
 
-## Configuração de variáveis de ambiente
-
-Preencha `.env.local` com os valores do seu projeto Supabase:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
-SUPABASE_SERVICE_KEY=your-service-role-key
-```
-
-> `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY` são usados pelo cliente do Supabase no navegador e no servidor.
-> `SUPABASE_SERVICE_KEY` é uma chave secreta usada somente no servidor.
-
 ## MCP Stitch
 
 A configuração do MCP do Google Stitch (para design de screens via IA) está em `~/.config/opencode/opencode.jsonc`. É um MCP remoto que aponta para `https://stitch.googleapis.com/mcp` e requer a variável de ambiente `GOOGLE_STITCH_API_KEY` com a chave da API.
