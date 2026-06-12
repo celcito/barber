@@ -6,9 +6,12 @@ interface ZApiResponse {
   zaapId?: string;
 }
 
+const MAX_RETRIES = 3;
+
 export async function sendWhatsApp(
   phone: string,
-  message: string
+  message: string,
+  retryCount = 0
 ): Promise<{ success: boolean; error?: string }> {
   const instanceId = process.env.ZAPI_INSTANCE_ID;
   const token = process.env.ZAPI_TOKEN;
@@ -18,15 +21,23 @@ export async function sendWhatsApp(
     return { success: false, error: "Z-API não configurado" };
   }
 
+  if (retryCount >= MAX_RETRIES) {
+    console.error("[Z-API] Max retries reached");
+    return { success: false, error: "Número máximo de tentativas excedido" };
+  }
+
   const cleanPhone = phone.replace(/\D/g, "");
   const fullPhone = `55${cleanPhone}`;
 
-  const url = `${ZAPI_BASE}/${instanceId}/token/${token}/send-text`;
+  const url = `${ZAPI_BASE}/${instanceId}/send-text`;
 
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Client-Token": token,
+      },
       body: JSON.stringify({
         phone: fullPhone,
         message,
@@ -35,7 +46,7 @@ export async function sendWhatsApp(
 
     if (res.status === 429) {
       await new Promise((r) => setTimeout(r, 2000));
-      return sendWhatsApp(phone, message);
+      return sendWhatsApp(phone, message, retryCount + 1);
     }
 
     if (!res.ok) {

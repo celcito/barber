@@ -50,70 +50,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Services Section */}
-      <section className="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="font-headline-md text-headline-md text-on-surface mb-stack-lg text-center">1. Escolha o Serviço</h2>
-          <div className="space-y-stack-md">
-            <div className="flex items-baseline justify-between">
-              <div className="flex items-baseline grow">
-                <span className="font-body-lg text-body-lg text-on-surface">Lavar, Cortar & Finalizar</span>
-                <div className="dotted-leader mx-4" />
-              </div>
-              <span className="font-body-lg text-body-lg text-primary">R$ 120</span>
-            </div>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-4">45 min</p>
-
-            <div className="flex items-baseline justify-between">
-              <div className="flex items-baseline grow">
-                <span className="font-body-lg text-body-lg text-on-surface">Corte, Toalha Quente & Massagem no Couro</span>
-                <div className="dotted-leader mx-4" />
-              </div>
-              <span className="font-body-lg text-body-lg text-primary">R$ 200</span>
-            </div>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-4">90 min</p>
-
-            <div className="flex items-baseline justify-between">
-              <div className="flex items-baseline grow">
-                <span className="font-body-lg text-body-lg text-on-surface">Navalha & Condicionamento</span>
-                <div className="dotted-leader mx-4" />
-              </div>
-              <span className="font-body-lg text-body-lg text-primary">R$ 80</span>
-            </div>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-4">30 min</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Barbers Section */}
-      <section className="bg-surface-container-low border-y border-outline-variant py-stack-lg">
-        <div className="max-w-container-max mx-auto px-margin-desktop">
-          <h2 className="font-headline-md text-headline-md text-on-surface mb-stack-lg text-center">2. Escolha o Barbeiro</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter max-w-4xl mx-auto">
-            <div className="bg-surface-container p-stack-md rounded border border-outline-variant flex items-center gap-stack-md hover:border-primary/50 transition-colors cursor-pointer group">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-outline group-hover:border-primary transition-colors relative">
-                <Image src="/images/barber-1.webp" alt="Julian Rossi" fill className="object-cover" />
-              </div>
-              <div>
-                <h3 className="font-headline-sm text-headline-sm text-on-surface">Julian Rossi</h3>
-                <p className="font-label-md text-label-md text-primary uppercase tracking-wider">Mestre Artesão</p>
-              </div>
-            </div>
-            
-            <div className="bg-surface-container p-stack-md rounded border border-outline-variant flex items-center gap-stack-md hover:border-primary/50 transition-colors cursor-pointer group">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-outline group-hover:border-primary transition-colors relative">
-                <Image src="/images/barber-2.webp" alt="Arthur Vance" fill className="object-cover" />
-              </div>
-              <div>
-                <h3 className="font-headline-sm text-headline-sm text-on-surface">Arthur Vance</h3>
-                <p className="font-label-md text-label-md text-primary uppercase tracking-wider">Barbeiro Sênior</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+   
       {/* Footer */}
       <footer className="bg-surface-container-lowest w-full py-stack-lg mt-stack-lg">
         <div className="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-stack-md">

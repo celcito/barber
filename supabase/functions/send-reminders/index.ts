@@ -25,6 +25,15 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 async function sendEmailReminder(to: string, subject: string, html: string) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   const from = Deno.env.get("RESEND_FROM") || "Agenda Fácil <onboarding@resend.dev>";
@@ -50,6 +59,15 @@ function buildEmailHtml(
   horario: string,
   salaoNome: string,
 ) {
+  const safe = {
+    clienteNome: escapeHtml(clienteNome),
+    servicoNome: escapeHtml(servicoNome),
+    profissionalNome: escapeHtml(profissionalNome),
+    data: escapeHtml(data),
+    horario: escapeHtml(horario),
+    salaoNome: escapeHtml(salaoNome),
+  };
+
   const cardStyle =
     "background-color:#0d0e0f;border-radius:6px;padding:24px;margin-bottom:24px;";
   const rowStyle =
@@ -66,21 +84,21 @@ function buildEmailHtml(
   <table align="center" role="presentation" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background-color:#1a1c1e;border-radius:8px;overflow:hidden;">
     <tr>
       <td style="background-color:#0d0e0f;padding:32px 40px 24px;text-align:center;">
-        <h1 style="font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:#c5a059;margin:0 0 4px;letter-spacing:0.02em;">${salaoNome}</h1>
+        <h1 style="font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:#c5a059;margin:0 0 4px;letter-spacing:0.02em;">${safe.salaoNome}</h1>
         <p style="font-size:12px;color:#9a8f80;letter-spacing:0.15em;text-transform:uppercase;margin:0;">Lembrete de Agendamento</p>
       </td>
     </tr>
     <tr>
       <td style="padding:32px 40px;">
-        <p style="font-size:16px;color:#e8e4df;margin:0 0 20px;line-height:1.5;">Olá ${clienteNome},</p>
-        <p style="font-size:16px;color:#e8e4df;margin:0 0 20px;line-height:1.5;">Passando para lembrar que você tem um horário marcado conosco:</p>
+        <p style="font-size:16px;color:#e8e4df;margin:0 0 20px;line-height:1.5;">Ol\u00e1 ${safe.clienteNome},</p>
+        <p style="font-size:16px;color:#e8e4df;margin:0 0 20px;line-height:1.5;">Passando para lembrar que voc\u00ea tem um hor\u00e1rio marcado conosco:</p>
         <table role="presentation" cellpadding="0" cellspacing="0" style="${cardStyle}width:100%;">
-          <tr><td style="${rowStyle}"><span style="${labelStyle}">Serviço</span><span style="${valueStyle}">${servicoNome}</span></td></tr>
-          <tr><td style="${rowStyle}"><span style="${labelStyle}">Profissional</span><span style="${valueStyle}">${profissionalNome}</span></td></tr>
-          <tr><td style="${rowStyle}"><span style="${labelStyle}">Data</span><span style="${valueStyle}">${data}</span></td></tr>
-          <tr><td style="display:flex;justify-content:space-between;padding:8px 0;"><span style="${labelStyle}">Horário</span><span style="${valueStyle}">${horario}</span></td></tr>
+          <tr><td style="${rowStyle}"><span style="${labelStyle}">Servi\u00e7o</span><span style="${valueStyle}">${safe.servicoNome}</span></td></tr>
+          <tr><td style="${rowStyle}"><span style="${labelStyle}">Profissional</span><span style="${valueStyle}">${safe.profissionalNome}</span></td></tr>
+          <tr><td style="${rowStyle}"><span style="${labelStyle}">Data</span><span style="${valueStyle}">${safe.data}</span></td></tr>
+          <tr><td style="display:flex;justify-content:space-between;padding:8px 0;"><span style="${labelStyle}">Hor\u00e1rio</span><span style="${valueStyle}">${safe.horario}</span></td></tr>
         </table>
-        <p style="font-size:14px;color:#9a8f80;margin:0;line-height:1.5;">Chegue no horário para aproveitar ao máximo seu atendimento.</p>
+        <p style="font-size:14px;color:#9a8f80;margin:0;line-height:1.5;">Chegue no hor\u00e1rio para aproveitar ao m\u00e1ximo seu atendimento.</p>
       </td>
     </tr>
     <tr>
@@ -88,8 +106,8 @@ function buildEmailHtml(
     </tr>
     <tr>
       <td style="padding:24px 40px 32px;text-align:center;">
-        <p style="font-size:12px;color:#6b655c;margin:0 0 4px;line-height:1.6;">${salaoNome}</p>
-        <p style="font-size:12px;color:#6b655c;margin:0;line-height:1.6;">Esperamos por você!</p>
+        <p style="font-size:12px;color:#6b655c;margin:0 0 4px;line-height:1.6;">${safe.salaoNome}</p>
+        <p style="font-size:12px;color:#6b655c;margin:0;line-height:1.6;">Esperamos por voc\u00ea!</p>
       </td>
     </tr>
   </table>
@@ -103,11 +121,14 @@ async function sendWhatsApp(phone: string, message: string) {
   if (!instanceId || !token) return;
 
   const cleanPhone = phone.replace(/\D/g, "");
-  const url = `https://api.z-api.io/instances/${instanceId}/token/${token}/send-text`;
+  const url = `https://api.z-api.io/instances/${instanceId}/send-text`;
 
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Client-Token": token,
+    },
     body: JSON.stringify({ phone: `55${cleanPhone}`, message }),
   });
 

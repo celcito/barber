@@ -5,14 +5,23 @@ import { createClient } from "@/lib/supabase/server";
 import { clienteSchema, DIAS_SEMANA_MAP } from "@/lib/schemas/agendamento";
 import { sendWhatsApp } from "@/lib/zapi";
 import { sendConfirmationEmail } from "@/lib/email";
+import { z } from "zod";
+
+const slugSchema = z.string().min(1).max(100).regex(/^[a-z0-9-]+$/);
+const uuidSchema = z.string().uuid();
+const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
 
 export async function getSalaoBySlug(slug: string) {
+  const parsed = slugSchema.safeParse(slug);
+  if (!parsed.success) return null;
+
   const supabase = await createClient();
 
   const { data: salao } = await supabase
     .from("saloes")
     .select("id, nome, slug, whatsapp, config")
-    .eq("slug", slug)
+    .eq("slug", parsed.data)
     .single();
 
   return salao as {
@@ -25,12 +34,15 @@ export async function getSalaoBySlug(slug: string) {
 }
 
 export async function getServicosPublic(salaoId: string) {
+  const parsed = uuidSchema.safeParse(salaoId);
+  if (!parsed.success) return [];
+
   const supabase = await createClient();
 
   const { data } = await supabase
     .from("servicos")
     .select("id, nome, duracao_min, preco")
-    .eq("salao_id", salaoId)
+    .eq("salao_id", parsed.data)
     .order("nome");
 
   return data ?? [];
@@ -43,12 +55,15 @@ export interface SlotDisponivel {
 }
 
 export async function getProfissionaisPublic(salaoId: string) {
+  const parsed = uuidSchema.safeParse(salaoId);
+  if (!parsed.success) return [];
+
   const supabase = await createClient();
 
   const { data } = await supabase
     .from("profissionais")
     .select("id, nome")
-    .eq("salao_id", salaoId)
+    .eq("salao_id", parsed.data)
     .eq("ativo", true)
     .order("nome");
 
@@ -57,9 +72,7 @@ export async function getProfissionaisPublic(salaoId: string) {
 
 async function getHorariosProfissional(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  salaoId: string,
-  profissionalId: string,
-  data: string
+  profissionalId: string
 ) {
   const { data: profHorarios } = await supabase
     .from("profissional_horarios")
@@ -103,7 +116,7 @@ async function calcularSlotsParaProfissional(
   )?.[0];
   if (!diaNome) return [];
 
-  let configDia = horariosConf[diaNome];
+  const configDia = horariosConf[diaNome];
   if (!configDia || !configDia.aberto) return [];
 
   const dataInicioDia = `${data}T00:00:00`;
@@ -176,36 +189,44 @@ export async function getHorariosDisponiveis(
   servicoId: string,
   data: string
 ): Promise<SlotDisponivel[]> {
+  const parsedSalaoId = uuidSchema.safeParse(salaoId);
+  const parsedServicoId = uuidSchema.safeParse(servicoId);
+  const parsedData = dateSchema.safeParse(data);
+  const parsedProfissionalId = profissionalId ? uuidSchema.safeParse(profissionalId) : null;
+
+  if (!parsedSalaoId.success || !parsedServicoId.success || !parsedData.success) return [];
+  if (parsedProfissionalId && !parsedProfissionalId.success) return [];
+
   const supabase = await createClient();
 
-  const { data: salao } = await supabase
+  const { data: salaoConfig } = await supabase
     .from("saloes")
     .select("config")
-    .eq("id", salaoId)
+    .eq("id", parsedSalaoId.data)
     .single();
 
-  const config = (salao?.config ?? {}) as Record<string, unknown>;
+  const config = (salaoConfig?.config ?? {}) as Record<string, unknown>;
   const horariosConf = (config.horarios ?? {}) as Record<
     string,
     { aberto: boolean; inicio: string; fim: string }
   >;
   const intervalo = (config.intervalo ?? 30) as number;
 
-  const dataObj = new Date(data + "T12:00:00");
+  const dataObj = new Date(parsedData.data + "T12:00:00");
   const diaSemana = dataObj.getDay();
   const diaNome = Object.entries(DIAS_SEMANA_MAP).find(
     ([, v]) => v === diaSemana
   )?.[0];
   if (!diaNome) return [];
 
-  if (profissionalId) {
-    const profHorarios = await getHorariosProfissional(supabase, salaoId, profissionalId, data);
+  if (parsedProfissionalId) {
+    const profHorarios = await getHorariosProfissional(supabase, parsedProfissionalId.data);
     const horariosUsar = profHorarios ?? horariosConf;
 
     if (!horariosUsar[diaNome] || !horariosUsar[diaNome].aberto) return [];
 
     return calcularSlotsParaProfissional(
-      supabase, salaoId, profissionalId, servicoId, data,
+      supabase, parsedSalaoId.data, parsedProfissionalId.data, parsedServicoId.data, parsedData.data,
       horariosUsar, intervalo
     );
   }
@@ -213,7 +234,7 @@ export async function getHorariosDisponiveis(
   const { data: profissionais } = await supabase
     .from("profissionais")
     .select("id, nome")
-    .eq("salao_id", salaoId)
+    .eq("salao_id", parsedSalaoId.data)
     .eq("ativo", true)
     .order("nome");
 
@@ -222,13 +243,13 @@ export async function getHorariosDisponiveis(
   const slotMap = new Map<string, { profissionalId: string; profissionalNome: string }>();
 
   for (const prof of profissionais) {
-    const profHorarios = await getHorariosProfissional(supabase, salaoId, prof.id, data);
+    const profHorarios = await getHorariosProfissional(supabase, prof.id);
     const horariosUsar = profHorarios ?? horariosConf;
 
     if (!horariosUsar[diaNome] || !horariosUsar[diaNome].aberto) continue;
 
     const profSlots = await calcularSlotsParaProfissional(
-      supabase, salaoId, prof.id, servicoId, data,
+      supabase, parsedSalaoId.data, prof.id, parsedServicoId.data, parsedData.data,
       horariosUsar, intervalo
     );
 
@@ -274,37 +295,46 @@ export async function createAgendamento(formData: FormData) {
     return { error: { _form: ["Dados incompletos para agendamento"] } };
   }
 
+  const parsedSalaoId = uuidSchema.safeParse(salaoId);
+  const parsedServicoId = uuidSchema.safeParse(servicoId);
+  const parsedProfissionalId = profissionalId ? uuidSchema.safeParse(profissionalId) : null;
+  const parsedData = dateSchema.safeParse(dataStr);
+
+  if (!parsedSalaoId.success || !parsedServicoId.success || !parsedData.success) {
+    return { error: { _form: ["Dados inválidos"] } };
+  }
+
   const { data: servico } = await supabase
     .from("servicos")
     .select("duracao_min, nome")
-    .eq("id", servicoId)
+    .eq("id", parsedServicoId.data)
     .single();
 
   if (!servico) {
     return { error: { _form: ["Serviço não encontrado"] } };
   }
 
-  const { data: profissional } = profissionalId
+  const { data: profissional } = parsedProfissionalId
     ? await supabase
         .from("profissionais")
         .select("nome")
-        .eq("id", profissionalId)
+        .eq("id", parsedProfissionalId.data)
         .single()
     : { data: null };
 
   const { data: salao } = await supabase
     .from("saloes")
     .select("nome, whatsapp")
-    .eq("id", salaoId)
+    .eq("id", parsedSalaoId.data)
     .single();
 
-  const inicio = new Date(`${dataStr}T${horario}:00`);
+  const inicio = new Date(`${parsedData.data}T${horario}:00`);
   const fim = new Date(inicio.getTime() + servico.duracao_min * 60000);
 
   const { data: conflito } = await supabase
     .from("agendamentos")
     .select("id")
-    .eq("salao_id", salaoId)
+    .eq("salao_id", parsedSalaoId.data)
     .eq("status", "confirmado")
     .gte("inicio", inicio.toISOString())
     .lt("inicio", fim.toISOString());
@@ -316,9 +346,9 @@ export async function createAgendamento(formData: FormData) {
   const { data: novoAgendamento, error } = await supabase
     .from("agendamentos")
     .insert({
-      salao_id: salaoId,
-      profissional_id: profissionalId || null,
-      servico_id: servicoId,
+      salao_id: parsedSalaoId.data,
+      profissional_id: parsedProfissionalId?.data || null,
+      servico_id: parsedServicoId.data,
       cliente_nome: parsed.data.nome,
       cliente_whatsapp: parsed.data.whatsapp,
       cliente_email: parsed.data.email || null,
@@ -330,7 +360,7 @@ export async function createAgendamento(formData: FormData) {
     .single();
 
   if (error) {
-    return { error: { _form: [error.message] } };
+    return { error: { _form: ["Erro ao criar agendamento"] } };
   }
 
   const dataFormatada = inicio.toLocaleDateString("pt-BR", {

@@ -134,16 +134,6 @@ export default function LoginPage() {
             </button>
           </div>
         </div>
-
-        {!isSignUp && process.env.NODE_ENV === 'development' && (
-          <div className="mt-6 p-4 rounded bg-surface-container-high border border-outline-variant text-center">
-            <p className="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-2">Teste</p>
-            <p className="font-label-sm text-label-sm text-on-surface-variant">
-              Email: <span className="text-on-surface font-mono">teste@barbearia.com</span><br />
-              Senha: <span className="text-on-surface font-mono">123456</span>
-            </p>
-          </div>
-        )}
       </div>
     </main>
   );
