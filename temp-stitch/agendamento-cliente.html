@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e5e2e1",
+                        "tertiary": "#b8c8da",
+                        "surface-variant": "#333535",
+                        "secondary-container": "#4a4949",
+                        "inverse-on-surface": "#2f3131",
+                        "primary-container": "#c5a059",
+                        "surface": "#121414",
+                        "tertiary-fixed": "#d4e4f6",
+                        "on-tertiary": "#223240",
+                        "primary-fixed-dim": "#e9c176",
+                        "on-tertiary-fixed": "#0d1d2a",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#d1c5b4",
+                        "surface-container": "#1e2020",
+                        "tertiary-container": "#97a7b8",
+                        "surface-container-low": "#1a1c1c",
+                        "on-primary": "#412d00",
+                        "surface-tint": "#e9c176",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "surface-container-highest": "#333535",
+                        "on-background": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#394857",
+                        "inverse-primary": "#775a19",
+                        "on-secondary-container": "#bab8b7",
+                        "surface-dim": "#121414",
+                        "outline-variant": "#4e4639",
+                        "surface-bright": "#38393a",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#5d4201",
+                        "error": "#ffb4ab",
+                        "background": "#121414",
+                        "surface-container-high": "#282a2b",
+                        "on-error": "#690005",
+                        "secondary": "#c8c6c5",
+                        "on-primary-container": "#4e3700",
+                        "on-secondary": "#313030",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "primary": "#e9c176",
+                        "primary-fixed": "#ffdea5",
+                        "outline": "#9a8f80",
+                        "on-surface": "#e2e2e2",
+                        "on-primary-fixed": "#261900",
+                        "tertiary-fixed-dim": "#b8c8da",
+                        "on-tertiary-container": "#2d3d4b",
+                        "on-secondary-fixed-variant": "#474646",
+                        "surface-container-lowest": "#0c0f0f",
+                        "inverse-surface": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "container-max": "1200px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Playfair Display"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Playfair Display"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .dotted-leader {
+            border-bottom: 2px dotted #4e4639;
+            flex-grow: 1;
+            margin: 0 8px;
+            position: relative;
+            top: -5px;
+        }
+
+        .luxury-gradient {
+            background: linear-gradient(180deg, rgba(18, 20, 20, 0.4) 0%, rgba(18, 20, 20, 0.95) 100%);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 w-full z-50 bg-surface border-b border-outline-variant h-20">
+        <div class="flex justify-between items-center px-margin-desktop h-full max-w-container-max mx-auto">
+            <span class="font-headline-md text-headline-md text-primary uppercase tracking-widest">The Grooming
+                Ritual</span>
+            <div class="hidden md:flex gap-gutter items-center">
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Services</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Barbers</a>
+                <a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1" href="#">Book Now</a>
+            </div>
+            <div class="flex items-center gap-stack-md">
+                <button
+                    class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-highest transition-all duration-300 px-4 py-2 rounded">Admin
+                    Login</button>
+                <img alt="User profile" class="w-10 h-10 rounded-full border border-outline-variant"
+                    data-alt="A professional headshot of a well-groomed man with a sharp haircut and neat beard, wearing a dark turtleneck. The lighting is sophisticated and directional, creating soft shadows. The background is a blurred, warm-toned upscale barbershop interior with hints of wood and aged gold accents, matching the vintage industrial luxury brand identity."
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn75gKIouq7A2RkUrHrGutDDRBZY2kycTg5jW1g2x0bEM2fGX-kwbxKlWFwl0Tdemu5bmCRY3s4J5lXXHXZxh1s1O8J0mrPZkIjWdOOBZoOteRw-iHNVdRct-Ep_32nP9eSSM4xfIP-8Hu1HZyV-QOrLUYtaQTXltJXZosXOEEnqlM5bgtAHD-pwhx4QKAwV2nfKQPU4JJwIyycsPe7V4ZPRIy5Z1U5-p5aeS0oUFMU1dyE5M6KWUYJ2njsQw4ujo-h2kUQrtYaJoq" />
+            </div>
+        </div>
+    </nav>
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section class="relative h-[614px] flex items-end overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img class="w-full h-full object-cover"
+                    data-alt="A luxurious, high-end barbershop interior at dusk. Dark charcoal walls are accented by slate textures and warm aged gold lighting from vintage industrial sconces. Antique leather barber chairs in deep mahogany stand before large mirrors. The atmosphere is serene, moody, and prestigious, evoking a private members' club feel with soft ambient smoke or steam in the air."
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZbEYP5vO5GnJAB0grb6qJmSfzF2ZaOZOW3N98-sZr1TbAGdtGOm19oi0jYeH1FFuSZVtVN74NXEGveScUvFBdsoSf6vv3QRRzXigDQeCJor_gK8IHu4JZckXJK8MNp4yu947jvoYJkrp-IIRGJqaspcPTk9QwL1sq9t8o7jxPm6_IX-rAwC6wMpmT9vsWQb4h61tX_t4pyWNyxmvrEN1Sq9Sm9mVZ0U2qmtmRwOniIGDgRimkFiqy5z64YbBgkX3U6PfHqiW31Ome" />
+                <div class="absolute inset-0 luxury-gradient"></div>
+            </div>
+            <div class="relative z-10 w-full max-w-container-max mx-auto px-margin-desktop pb-stack-lg">
+                <h1 class="font-display-lg text-display-lg text-primary max-w-2xl mb-base">Schedule Your Ritual</h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">Premium grooming is more than a
+                    service; it's a dedicated moment of refinement. Secure your seat with our master artisans.</p>
+            </div>
+        </section>
+        <!-- Booking Flow Container -->
+        <section class="max-w-container-max mx-auto px-margin-desktop py-stack-lg">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+                <!-- Left Column: Selection -->
+                <div class="lg:col-span-7 space-y-stack-lg">
+                    <!-- Step 1: Services -->
+                    <div class="bg-surface-container p-stack-md rounded-lg border border-outline-variant">
+                        <div class="flex items-center gap-base mb-stack-md">
+                            <span class="material-symbols-outlined text-primary">content_cut</span>
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface">1. Choose Service</h2>
+                        </div>
+                        <div class="space-y-stack-sm">
+                            <!-- Service Item -->
+                            <div
+                                class="group cursor-pointer p-4 hover:bg-surface-container-highest transition-all border border-transparent hover:border-outline-variant flex items-center justify-between rounded">
+                                <div class="flex-1">
+                                    <div class="flex items-baseline w-full">
+                                        <span class="font-label-md text-label-md text-on-surface">Premium Haircut</span>
+                                        <span class="dotted-leader"></span>
+                                        <span class="font-label-md text-label-md text-primary">$45</span>
+                                    </div>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">45 min • Wash,
+                                        Cut, &amp; Style</p>
+                                </div>
+                                <div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span class="material-symbols-outlined text-primary">add_circle</span>
+                                </div>
+                            </div>
+                            <div
+                                class="group cursor-pointer p-4 hover:bg-surface-container-highest transition-all border border-transparent hover:border-outline-variant flex items-center justify-between rounded bg-surface-container-high border-primary/20">
+                                <div class="flex-1">
+                                    <div class="flex items-baseline w-full">
+                                        <span class="font-label-md text-label-md text-primary">The Ritual (Combo)</span>
+                                        <span class="dotted-leader"></span>
+                                        <span class="font-label-md text-label-md text-primary">$75</span>
+                                    </div>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">90 min • Cut,
+                                        Hot Towel Shave, &amp; Scalp Massage</p>
+                                </div>
+                                <div class="ml-4">
+                                    <span class="material-symbols-outlined text-primary"
+                                        style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                </div>
+                            </div>
+                            <div
+                                class="group cursor-pointer p-4 hover:bg-surface-container-highest transition-all border border-transparent hover:border-outline-variant flex items-center justify-between rounded">
+                                <div class="flex-1">
+                                    <div class="flex items-baseline w-full">
+                                        <span class="font-label-md text-label-md text-on-surface">Beard Sculpting</span>
+                                        <span class="dotted-leader"></span>
+                                        <span class="font-label-md text-label-md text-primary">$35</span>
+                                    </div>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">30 min • Razor
+                                        Edge &amp; Conditioning</p>
+                                </div>
+                                <div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span class="material-symbols-outlined text-primary">add_circle</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Step 2: Professionals -->
+                    <div class="bg-surface-container p-stack-md rounded-lg border border-outline-variant">
+                        <div class="flex items-center gap-base mb-stack-md">
+                            <span class="material-symbols-outlined text-primary">group</span>
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface">2. Select Barber</h2>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-stack-md">
+                            <!-- Barber Card -->
+                            <div class="text-center group cursor-pointer">
+                                <div class="relative mb-base mx-auto w-24 h-24">
+                                    <img class="w-full h-full object-cover rounded-full border-2 border-transparent group-hover:border-primary transition-all p-1"
+                                        data-alt="A professional male barber with styled hair and a classic vest, smiling warmly. He is in a premium studio setting with industrial charcoal walls and warm gold lighting. The image captures a sense of expertise and high-end service, consistent with a vintage luxury aesthetic."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZDWThL9H8DvTWADxWQqpQ2YEH5EpXPm5Q0joMLfwsLuS56d0Dd8zJ9_HliLwBPNqu0eFtDR5xzbj5EHrkaCJ7Q4GgnYs1vANRv69SNn_6iJbYtV29rFR8XDgFgKBr1YBZUj1v8qD8aOKnBRUrbvG61o25bziHeaFarGuXHgUWnPYXTptrYxw-yzibXjZRGXQK62HpHVhDpqqJxNKUanWk3fJb2cmM4JWqyT3zlgAT4gbMwbaueJQU1GLLzF8cHDMqlEpLMkN0Az0-" />
+                                    <div
+                                        class="absolute bottom-0 right-0 bg-primary w-6 h-6 rounded-full flex items-center justify-center border-2 border-surface shadow-sm">
+                                        <span class="material-symbols-outlined text-surface text-[14px]"
+                                            style="font-variation-settings: 'FILL' 1;">check</span>
+                                    </div>
+                                </div>
+                                <p class="font-label-md text-label-md text-primary">Julian Rossi</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">Master Artisan</p>
+                            </div>
+                            <div class="text-center group cursor-pointer grayscale hover:grayscale-0 transition-all">
+                                <div class="relative mb-base mx-auto w-24 h-24">
+                                    <img class="w-full h-full object-cover rounded-full border-2 border-transparent group-hover:border-primary transition-all p-1"
+                                        data-alt="A senior barber with a well-maintained grey beard and sharp modern haircut, wearing a leather apron. He stands in a dark-toned shop with slate textures and warm industrial lighting. Professional, authoritative, and skilled vibe for a luxury grooming brand."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgyKBunKxUe-1yP9hsZuaAUK7TX81hlXqYqmxSStVlPVqhIdqiOTaLauCLwpocVmNxFT5MQV3PSYv2ghz5wv0-5p_MnGz-tlGYpvxrYt5dIdCnnLHqFrVecX37Vbr8KNtdps3gftGIlVdT4Qf4YhwGXK1Ew3RLAGDldTBwUK8cXQWZ-R3-_RtNhiMRP9sBkzz15Y7rx_ph-XgKZkVyvteWExlsX1VjmiuCA3il1CX-D8uWtsdtci9OKXLHShOiNDTNLD8EZUdDVsr7" />
+                                </div>
+                                <p class="font-label-md text-label-md text-on-surface">Arthur Vance</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">Senior Barber</p>
+                            </div>
+                            <div class="text-center group cursor-pointer grayscale hover:grayscale-0 transition-all">
+                                <div class="relative mb-base mx-auto w-24 h-24">
+                                    <img class="w-full h-full object-cover rounded-full border-2 border-transparent group-hover:border-primary transition-all p-1"
+                                        data-alt="A trendy male barber with tattoos on his arms, wearing a black shirt, focused on his craft in a high-end vintage industrial barbershop. The lighting is moody and warm, highlighting slate and charcoal surfaces. He represents the modern craftsman aspect of the brand."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6sCPUfjegB8nZi8xN1_9OetwCjjftztQJHcrgSmKYuZPR1zI3sHBbUnBvXrulPqgLTOwyLEarLG9vqZgS_pWvpjKt7RTE9MzFjjhxyidPtFsFHa2eCS0XsB2UE_slliTRPdiWEk54hxIou-tMeGr8wGQ5gWEAtO3iAl6_PxdLnl0teUmtKHANI8aNt-Av8AAk291r7fr8mDJ8ZOL8r05QqQWQnJK3LwJXiSoLI6oahxYnNB_LjX38GDgqFfcWmWHdf-2y9vQRKTq_" />
+                                </div>
+                                <p class="font-label-md text-label-md text-on-surface">Leo Sterling</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">Stylist</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Column: Calendar & Summary -->
+                <div class="lg:col-span-5 space-y-stack-lg">
+                    <!-- Step 3: Calendar -->
+                    <div class="bg-surface-container p-stack-md rounded-lg border border-outline-variant">
+                        <div class="flex items-center gap-base mb-stack-md">
+                            <span class="material-symbols-outlined text-primary">calendar_month</span>
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface">3. Date &amp; Time</h2>
+                        </div>
+                        <!-- Mini Calendar UI -->
+                        <div class="mb-stack-md">
+                            <div class="flex justify-between items-center mb-4">
+                                <p class="font-label-md text-label-md text-on-surface">October 2024</p>
+                                <div class="flex gap-2">
+                                    <button class="p-1 hover:text-primary transition-colors"><span
+                                            class="material-symbols-outlined">chevron_left</span></button>
+                                    <button class="p-1 hover:text-primary transition-colors"><span
+                                            class="material-symbols-outlined">chevron_right</span></button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">S</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">M</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">T</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">W</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">T</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">F</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">S</span>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1">
+                                <!-- Calendar days (simplified) -->
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface-variant/30 font-label-sm text-label-sm">
+                                    29</div>
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface-variant/30 font-label-sm text-label-sm">
+                                    30</div>
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest cursor-pointer rounded">
+                                    1</div>
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest cursor-pointer rounded">
+                                    2</div>
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest cursor-pointer rounded">
+                                    3</div>
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest cursor-pointer rounded">
+                                    4</div>
+                                <div
+                                    class="h-10 flex items-center justify-center bg-primary text-on-primary font-label-sm text-label-sm rounded font-bold">
+                                    5</div>
+                                <!-- ... rest of days -->
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest cursor-pointer rounded">
+                                    6</div>
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest cursor-pointer rounded">
+                                    7</div>
+                                <div
+                                    class="h-10 flex items-center justify-center text-on-surface font-label-sm text-label-sm hover:bg-surface-container-highest cursor-pointer rounded">
+                                    8</div>
+                            </div>
+                        </div>
+                        <!-- Time Slots -->
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Available
+                                slots for Oct 5</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button
+                                    class="py-2 border border-outline-variant rounded font-label-sm text-label-sm hover:border-primary hover:text-primary transition-all">09:00
+                                    AM</button>
+                                <button
+                                    class="py-2 border border-primary bg-primary/10 text-primary rounded font-label-sm text-label-sm">10:30
+                                    AM</button>
+                                <button
+                                    class="py-2 border border-outline-variant rounded font-label-sm text-label-sm hover:border-primary hover:text-primary transition-all">11:15
+                                    AM</button>
+                                <button
+                                    class="py-2 border border-outline-variant rounded font-label-sm text-label-sm opacity-30 cursor-not-allowed">01:00
+                                    PM</button>
+                                <button
+                                    class="py-2 border border-outline-variant rounded font-label-sm text-label-sm hover:border-primary hover:text-primary transition-all">02:30
+                                    PM</button>
+                                <button
+                                    class="py-2 border border-outline-variant rounded font-label-sm text-label-sm hover:border-primary hover:text-primary transition-all">04:00
+                                    PM</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Booking Summary -->
+                    <div class="bg-surface-container-high p-stack-md rounded-lg border border-primary/30 shadow-xl">
+                        <h3 class="font-headline-sm text-headline-sm text-primary mb-stack-sm">Ritual Summary</h3>
+                        <div class="space-y-3 mb-stack-md">
+                            <div class="flex justify-between items-start">
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Service</span>
+                                <span class="font-label-md text-label-md text-on-surface text-right">The Ritual
+                                    (Combo)</span>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Barber</span>
+                                <span class="font-label-md text-label-md text-on-surface text-right">Julian Rossi</span>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Date &amp; Time</span>
+                                <span class="font-label-md text-label-md text-on-surface text-right">Oct 5, 2024 at
+                                    10:30 AM</span>
+                            </div>
+                            <div class="pt-3 border-t border-outline-variant flex justify-between items-center">
+                                <span class="font-headline-sm text-headline-sm text-on-surface">Total</span>
+                                <span class="font-headline-sm text-headline-sm text-primary">$75.00</span>
+                            </div>
+                        </div>
+                        <button
+                            class="w-full py-4 bg-primary text-on-primary font-label-md text-label-md uppercase tracking-widest rounded-sm hover:brightness-110 active:scale-[0.98] transition-all shadow-lg">
+                            Confirmar Appointment
+                        </button>
+                        <p class="text-center font-label-sm text-label-sm text-on-surface-variant mt-4 italic">No
+                            payment required now. Pay after your ritual.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-surface-container-lowest border-t border-outline-variant w-full py-stack-lg mt-stack-lg">
+        <div
+            class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto gap-stack-md">
+            <span class="font-headline-sm text-headline-sm text-primary uppercase tracking-widest">The Grooming
+                Ritual</span>
+            <p class="font-body-md text-body-md text-on-surface-variant text-center md:text-left">
+                © 2024 The Grooming Ritual. Handcrafted Grooming.
+            </p>
+            <div class="flex gap-stack-md">
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Privacy Policy</a>
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Terms of Service</a>
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Simple micro-interaction for the service selection
+        document.querySelectorAll('.group[cursor-pointer]').forEach(item => {
+            item.addEventListener('click', () => {
+                // This is a demo; in a real app we'd toggle classes
+                console.log('Selection changed');
+            });
+        });
+
+        // Atmospheric parallax-like effect on scroll for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroImg = document.querySelector('section img');
+            if (heroImg) {
+                heroImg.style.transform = `translateY(${scrolled * 0.4}px)`;
+            }
+        });
+    </script>
+</body>
+
+</html>

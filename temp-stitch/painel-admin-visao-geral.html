@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .dotted-leader {
+            display: flex;
+            align-items: baseline;
+        }
+
+        .dotted-leader::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px dotted #4e4639;
+            margin: 0 8px;
+        }
+
+        body {
+            background-color: #121414;
+            color: #e2e2e2;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e5e2e1",
+                        "tertiary": "#b8c8da",
+                        "surface-variant": "#333535",
+                        "secondary-container": "#4a4949",
+                        "inverse-on-surface": "#2f3131",
+                        "primary-container": "#c5a059",
+                        "surface": "#121414",
+                        "tertiary-fixed": "#d4e4f6",
+                        "on-tertiary": "#223240",
+                        "primary-fixed-dim": "#e9c176",
+                        "on-tertiary-fixed": "#0d1d2a",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#d1c5b4",
+                        "surface-container": "#1e2020",
+                        "tertiary-container": "#97a7b8",
+                        "surface-container-low": "#1a1c1c",
+                        "on-primary": "#412d00",
+                        "surface-tint": "#e9c176",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "surface-container-highest": "#333535",
+                        "on-background": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#394857",
+                        "inverse-primary": "#775a19",
+                        "on-secondary-container": "#bab8b7",
+                        "surface-dim": "#121414",
+                        "outline-variant": "#4e4639",
+                        "surface-bright": "#38393a",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#5d4201",
+                        "error": "#ffb4ab",
+                        "background": "#121414",
+                        "surface-container-high": "#282a2b",
+                        "on-error": "#690005",
+                        "secondary": "#c8c6c5",
+                        "on-primary-container": "#4e3700",
+                        "on-secondary": "#313030",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "primary": "#e9c176",
+                        "primary-fixed": "#ffdea5",
+                        "outline": "#9a8f80",
+                        "on-surface": "#e2e2e2",
+                        "on-primary-fixed": "#261900",
+                        "tertiary-fixed-dim": "#b8c8da",
+                        "on-tertiary-container": "#2d3d4b",
+                        "on-secondary-fixed-variant": "#474646",
+                        "surface-container-lowest": "#0c0f0f",
+                        "inverse-surface": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "container-max": "1200px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Playfair Display"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Playfair Display"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="font-body-md text-body-md overflow-x-hidden">
+    <!-- SideNavBar Shell -->
+    <nav
+        class="h-screen w-64 left-0 top-0 fixed bg-surface-container dark:bg-surface-container border-r border-outline-variant shadow-sm flex flex-col py-base px-stack-sm z-50">
+        <!-- Brand Header -->
+        <div class="flex items-center gap-stack-sm px-base py-stack-md">
+            <div class="w-10 h-10 rounded-full overflow-hidden border border-primary/30">
+                <img alt="Admin Avatar" class="w-full h-full object-cover"
+                    data-alt="A sophisticated close-up portrait of a professional barber with a well-groomed beard, wearing a vintage leather apron in a dimly lit, high-end barber shop setting. The lighting is moody and dramatic, focusing on the textures of the leather and the craftsman's serious expression. The color palette consists of deep charcols, slate greys, and rich mahogany tones, perfectly reflecting the premium brand identity."
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNbb8tgukkWXwrON2R3LyVUj9qBb1J_je7X_NHhCQQW7cEEohyVOYae8oDlT96NdPhFDRD58XnbLi2J80obwUZrYX4pTJy4gXvP_fR9tgE5L1Fy-fFLAmI3iogTl6Mig9FWTzR6tJsGr8gOcnEZA_SPreSJZeZ7x9Sj0mHVt_2P12yPAF-ae6Xh1pmBorcgBkvumNgB_JJjguDglTJcDnSv2ZH1XOmSlc2V8IImC6NOyPSWNBr86Z-S3blvICN9XOs9e3XDMetOzcQ" />
+            </div>
+            <div>
+                <h2 class="font-headline-sm text-headline-sm text-primary">The Shop</h2>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">Admin Management</p>
+            </div>
+        </div>
+        <!-- Navigation Links -->
+        <div class="mt-stack-lg space-y-base flex-grow">
+            <!-- Active State: Dashboard -->
+            <a class="flex items-center gap-stack-sm px-stack-sm py-3 bg-primary-container text-on-primary-container rounded-lg font-bold transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="font-label-md text-label-md">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-stack-sm px-stack-sm py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                <span class="font-label-md text-label-md">Schedule</span>
+            </a>
+            <a class="flex items-center gap-stack-sm px-stack-sm py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+                <span class="font-label-md text-label-md">Services</span>
+            </a>
+            <a class="flex items-center gap-stack-sm px-stack-sm py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="group">group</span>
+                <span class="font-label-md text-label-md">Team</span>
+            </a>
+            <a class="flex items-center gap-stack-sm px-stack-sm py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span class="font-label-md text-label-md">Settings</span>
+            </a>
+        </div>
+        <!-- CTA & Footer Links -->
+        <div class="border-t border-outline-variant pt-stack-md space-y-base mb-base">
+            <button
+                class="w-full py-3 px-base bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:opacity-90 active:scale-95 transition-all">
+                Novo Agendamento
+            </button>
+            <a class="flex items-center gap-stack-sm px-stack-sm py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                <span class="font-label-md text-label-md">Support</span>
+            </a>
+            <a class="flex items-center gap-stack-sm px-stack-sm py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span class="font-label-md text-label-md">Logout</span>
+            </a>
+        </div>
+    </nav>
+    <!-- Main Content Shell -->
+    <main class="ml-64 min-h-screen bg-surface px-margin-desktop py-stack-lg max-w-container-max mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-end mb-stack-lg">
+            <div>
+                <h1 class="font-headline-md text-headline-md text-on-surface">Visão Geral</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Gestão do dia 24 de Outubro, 2024</p>
+            </div>
+            <div class="flex items-center gap-stack-sm">
+                <div
+                    class="flex items-center gap-base px-stack-sm py-2 bg-surface-container rounded-lg border border-outline-variant">
+                    <span class="material-symbols-outlined text-primary" data-icon="history">history</span>
+                    <span class="font-label-md text-label-md text-on-surface">Última sincronização: Agora</span>
+                </div>
+            </div>
+        </header>
+        <!-- Stats Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-stack-lg">
+            <!-- Stat 1 -->
+            <div
+                class="bg-surface-container p-stack-md border border-outline-variant rounded-xl group hover:border-primary/50 transition-colors">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-primary-container/20 rounded-lg">
+                        <span class="material-symbols-outlined text-primary"
+                            data-icon="event_available">event_available</span>
+                    </div>
+                    <span class="font-label-sm text-label-sm text-primary">+12% vs ontem</span>
+                </div>
+                <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Agendamentos
+                    hoje</h3>
+                <p class="font-display-lg text-display-lg text-on-surface">18</p>
+            </div>
+            <!-- Stat 2 -->
+            <div
+                class="bg-surface-container p-stack-md border border-outline-variant rounded-xl group hover:border-primary/50 transition-colors">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-primary-container/20 rounded-lg">
+                        <span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+                    </div>
+                    <span class="font-label-sm text-label-sm text-primary">Em progresso</span>
+                </div>
+                <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Receita
+                    estimada</h3>
+                <p class="font-display-lg text-display-lg text-on-surface">R$ 2.450</p>
+            </div>
+            <!-- Stat 3 -->
+            <div
+                class="bg-surface-container p-stack-md border border-outline-variant rounded-xl group hover:border-primary/50 transition-colors">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-primary-container/20 rounded-lg">
+                        <span class="material-symbols-outlined text-primary" data-icon="person_add">person_add</span>
+                    </div>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Novos cadastros</span>
+                </div>
+                <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Clientes novos
+                </h3>
+                <p class="font-display-lg text-display-lg text-on-surface">05</p>
+            </div>
+        </div>
+        <!-- Appointment Table/Section -->
+        <section class="bg-surface-container rounded-xl border border-outline-variant overflow-hidden">
+            <div class="px-stack-md py-stack-md border-b border-outline-variant flex justify-between items-center">
+                <h2 class="font-headline-sm text-headline-sm text-on-surface">Próximos Agendamentos</h2>
+                <div class="flex gap-stack-sm">
+                    <button
+                        class="px-4 py-2 border border-outline text-on-surface-variant font-label-md text-label-md rounded-lg hover:bg-surface-container-highest transition-colors">Ver
+                        Calendário Completo</button>
+                    <button
+                        class="px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:opacity-90 transition-opacity">Filtrar</button>
+                </div>
+            </div>
+            <!-- List of Appointments -->
+            <div class="divide-y divide-outline-variant">
+                <!-- Row 1 -->
+                <div
+                    class="px-stack-md py-stack-md flex items-center justify-between hover:bg-surface-container-high transition-colors">
+                    <div class="flex items-center gap-stack-md">
+                        <div class="text-center min-w-[80px]">
+                            <p class="font-headline-sm text-headline-sm text-primary">09:00</p>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant">45 min</p>
+                        </div>
+                        <div class="h-10 w-[1px] bg-outline-variant"></div>
+                        <div>
+                            <p class="font-headline-sm text-headline-sm text-on-surface">Arthur Shelby</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Corte Clássico &amp; Barba
+                                Terapia</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-stack-lg">
+                        <div class="flex -space-x-2">
+                            <img alt="Barber" class="w-8 h-8 rounded-full border-2 border-surface"
+                                data-alt="Close-up of a professional barber's hand holding vintage shears, focusing on the intricate details of the metal and the sharp edges. The lighting is focused and warm, reminiscent of a workshop. The background is a blurred high-end barber shop with dark wood and slate grey tones."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDk33UmdQxrjsPN_j5woF4EfmDXrg80sUUxi13lg3fcg5Xv_HjTchRCupIw_gwNe92lpDdiE40aBbUkmJOVl-zK4cKx7dJwHChP47XTmupS4GJJGDJKruMVDY8K0mr0N1ZqJHL537RaymxeA9rGTfvPFdsuQChvrySSS6Hf3J2v4CLVNryEW91jot4CDZcv6Y8ljM5Y_aZeKwWcbWTVLLvX6oXBP4OiQiOFe3YK2rmH5KQ5JCtDRYEiPvBzSwNy5wkK6Si-DVNyudGz" />
+                            <span class="text-on-surface-variant font-label-sm text-label-sm self-center ml-4">Barbeiro:
+                                Julian</span>
+                        </div>
+                        <span
+                            class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-sm text-label-sm">Confirmado</span>
+                        <button
+                            class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
+                            data-icon="more_vert">more_vert</button>
+                    </div>
+                </div>
+                <!-- Row 2 -->
+                <div
+                    class="px-stack-md py-stack-md flex items-center justify-between hover:bg-surface-container-high transition-colors">
+                    <div class="flex items-center gap-stack-md">
+                        <div class="text-center min-w-[80px]">
+                            <p class="font-headline-sm text-headline-sm text-primary">10:15</p>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant">30 min</p>
+                        </div>
+                        <div class="h-10 w-[1px] bg-outline-variant"></div>
+                        <div>
+                            <p class="font-headline-sm text-headline-sm text-on-surface">Thomas Shelby</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Hot Towel Shave</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-stack-lg">
+                        <div class="flex -space-x-2">
+                            <img alt="Barber" class="w-8 h-8 rounded-full border-2 border-surface"
+                                data-alt="A macro shot of a straight razor resting on a clean, dark slate surface. The light catches the polished edge of the blade, creating a sharp glint. The atmosphere is quiet, masculine, and refined, with subtle shadows emphasizing the tool's form. The scene is set in a premium grooming ritual environment with charcoal and aged gold accents."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrdns8kYUktTmwj2OQvUEokxoAgbfE_Yzl_XJLUQwrcLxVcdFUz63ZRYXffGs6EhrwUtQBVe9h2OPdtCVI8W1D0okSP8T-GWvsqQh1k1G-8RL_Pr_5bYPp8aAcY5YvU2vGZxDlkX87WVIuTnNUkLZCKVPlC6j6wNhf0w6X_HPLAjuznSqyT0vkYyf3zKGCAnRt6di3H19ppWS9AgGl2M-KoiIGTfsyBycAeAzhnaGbIF3M0thnFUHn240TgzpZUTrs5WPKEdrRCf7O" />
+                            <span class="text-on-surface-variant font-label-sm text-label-sm self-center ml-4">Barbeiro:
+                                Marcos</span>
+                        </div>
+                        <span
+                            class="px-3 py-1 bg-surface-variant text-on-surface-variant border border-outline-variant rounded-full font-label-sm text-label-sm">Em
+                            andamento</span>
+                        <button
+                            class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
+                            data-icon="more_vert">more_vert</button>
+                    </div>
+                </div>
+                <!-- Row 3 -->
+                <div
+                    class="px-stack-md py-stack-md flex items-center justify-between hover:bg-surface-container-high transition-colors">
+                    <div class="flex items-center gap-stack-md">
+                        <div class="text-center min-w-[80px]">
+                            <p class="font-headline-sm text-headline-sm text-primary">11:00</p>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant">60 min</p>
+                        </div>
+                        <div class="h-10 w-[1px] bg-outline-variant"></div>
+                        <div>
+                            <p class="font-headline-sm text-headline-sm text-on-surface">John Doe</p>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Grooming Ritual Completo</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-stack-lg">
+                        <div class="flex -space-x-2">
+                            <img alt="Barber" class="w-8 h-8 rounded-full border-2 border-surface"
+                                data-alt="Close-up of a professional barber's hand holding vintage shears, focusing on the intricate details of the metal and the sharp edges. The lighting is focused and warm, reminiscent of a workshop. The background is a blurred high-end barber shop with dark wood and slate grey tones."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEOoITkN6S6Gz4HtN5APxkr9YWqELeoyq50ENvuSsWxHMDMbEd9xM5LyIPta6XNIa499HEejNmY2OKhBYu683zY9aysQQuSbI6y0H_xfFBf5dHtJjJVM459BYphAMjJJFuhGuyvpoh5zYTppiJEv9hjf-R0SgabwSfF1U-1z8DtdbNOjJqsm4IB2cJP_SouzAwdbBjOPfDRQSI7CSGo8RgaPW2SRI5eGqxi4gi_Gv2ex8eAJpL4pWkz794ltokABED6832XaifYLC9" />
+                            <span class="text-on-surface-variant font-label-sm text-label-sm self-center ml-4">Barbeiro:
+                                Julian</span>
+                        </div>
+                        <span
+                            class="px-3 py-1 bg-tertiary-container/10 text-tertiary border border-tertiary/20 rounded-full font-label-sm text-label-sm">Pendente</span>
+                        <button
+                            class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
+                            data-icon="more_vert">more_vert</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Secondary Info Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mt-stack-lg">
+            <!-- Team Presence -->
+            <div class="bg-surface-container p-stack-md border border-outline-variant rounded-xl">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-md">Equipe em Serviço</h3>
+                <div class="space-y-stack-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-stack-sm">
+                            <div class="w-2 h-2 bg-primary rounded-full"></div>
+                            <span class="font-body-md text-body-md text-on-surface">Julian Rossi</span>
+                        </div>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">4 Agendamentos
+                            restantes</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-stack-sm">
+                            <div class="w-2 h-2 bg-primary rounded-full"></div>
+                            <span class="font-body-md text-body-md text-on-surface">Marcos Venâncio</span>
+                        </div>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">2 Agendamentos
+                            restantes</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-stack-sm">
+                            <div class="w-2 h-2 bg-surface-variant rounded-full"></div>
+                            <span class="font-body-md text-body-md text-on-surface-variant">Antônio Carlos</span>
+                        </div>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Indisponível (Folga)</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Inventory/Quick Menu Style Card -->
+            <div class="bg-surface-container p-stack-md border border-outline-variant rounded-xl">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-md">Menu de Serviços Popular</h3>
+                <div class="space-y-stack-sm">
+                    <div class="dotted-leader">
+                        <span class="font-body-md text-body-md text-on-surface">Corte Clássico</span>
+                        <span class="font-label-md text-label-md text-primary">R$ 85</span>
+                    </div>
+                    <div class="dotted-leader">
+                        <span class="font-body-md text-body-md text-on-surface">Barba Terapia</span>
+                        <span class="font-label-md text-label-md text-primary">R$ 60</span>
+                    </div>
+                    <div class="dotted-leader">
+                        <span class="font-body-md text-body-md text-on-surface">Ritual Completo</span>
+                        <span class="font-label-md text-label-md text-primary">R$ 130</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer Shell -->
+    <footer
+        class="ml-64 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant w-auto py-stack-lg">
+        <div
+            class="flex flex-col md:flex-row justify-between items-center px-margin-desktop max-w-container-max mx-auto">
+            <p class="font-body-md text-body-md text-on-surface-variant">© 2024 The Grooming Ritual. Handcrafted
+                Grooming.</p>
+            <div class="flex gap-stack-md mt-stack-md md:mt-0">
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Privacy Policy</a>
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Terms of Service</a>
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                    href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Simple interactivity for demonstration
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (el.tagName === 'A' && el.getAttribute('href') === '#') {
+                    e.preventDefault();
+                }
+                console.log('Interaction detected on:', el.innerText || 'Icon/Button');
+            });
+        });
+    </script>
+</body>
+
+</html>
