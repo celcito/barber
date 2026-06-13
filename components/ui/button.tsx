@@ -35,7 +35,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "btn",
+          "btn cursor-pointer",
           `btn-${variant}`,
           `btn-${size}`,
           className
