@@ -42,13 +42,13 @@ BEGIN
   -- Criar horários do profissional (mesmos do salão)
   INSERT INTO public.profissional_horarios (profissional_id, dia_semana, aberto, inicio, fim)
   VALUES
-    (''||v_profissional_id, 'segunda-feira', true, '09:00', '19:00'),
-    (''||v_profissional_id, 'terça-feira', true, '09:00', '19:00'),
-    (''||v_profissional_id, 'quarta-feira', true, '09:00', '19:00'),
-    (''||v_profissional_id, 'quinta-feira', true, '09:00', '19:00'),
-    (''||v_profissional_id, 'sexta-feira', true, '09:00', '19:00'),
-    (''||v_profissional_id, 'sábado', true, '09:00', '14:00'),
-    (''||v_profissional_id, 'domingo', false, '09:00', '19:00');
+    (v_profissional_id, 'segunda-feira', true, '09:00', '19:00'),
+    (v_profissional_id, 'terça-feira', true, '09:00', '19:00'),
+    (v_profissional_id, 'quarta-feira', true, '09:00', '19:00'),
+    (v_profissional_id, 'quinta-feira', true, '09:00', '19:00'),
+    (v_profissional_id, 'sexta-feira', true, '09:00', '19:00'),
+    (v_profissional_id, 'sábado', true, '09:00', '14:00'),
+    (v_profissional_id, 'domingo', false, '09:00', '19:00');
 
   -- Criar serviços padrão
   INSERT INTO public.servicos (salao_id, nome, duracao_min, preco)
