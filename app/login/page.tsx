@@ -133,6 +133,14 @@ export default function LoginPage() {
               {isSignUp ? "Já tenho conta" : "Não tenho conta"}
             </button>
           </div>
+
+          {!isSignUp && (
+            <div className="mt-4 p-3 bg-surface-container-high rounded text-center">
+              <p className="font-label-sm text-label-sm text-on-surface-variant mb-1">Dados de teste:</p>
+              <p className="font-body-sm text-body-sm text-on-surface">teste@barbearia.com</p>
+              <p className="font-body-sm text-body-sm text-on-surface">123456</p>
+            </div>
+          )}
         </div>
       </div>
     </main>
