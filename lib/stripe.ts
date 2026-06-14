@@ -1,4 +1,4 @@
-import Stripe from "stripe";
+/* import Stripe from "stripe";
 
 const secretKey = process.env.STRIPE_SECRET_KEY;
 if (!secretKey) {
@@ -16,3 +16,4 @@ if (!priceId) {
 
 export const PRICE_ID = priceId;
 export const TRIAL_DAYS = 30;
+ */
