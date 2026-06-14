@@ -360,7 +360,8 @@ export async function createAgendamento(formData: FormData) {
     .single();
 
   if (error) {
-    return { error: { _form: ["Erro ao criar agendamento"] } };
+    console.error("[Agendamento] Error:", error.message, error.details, error.hint);
+    return { error: { _form: [`Erro ao criar agendamento: ${error.message}`] } };
   }
 
   const dataFormatada = inicio.toLocaleDateString("pt-BR", {
