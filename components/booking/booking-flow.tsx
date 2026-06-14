@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { Stepper, type Step } from "@/components/ui/stepper";
 import { Button } from "@/components/ui/button";
 import { StepService } from "./step-service";
@@ -235,10 +236,12 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
               </p>
 
               <div className="flex-1 min-h-[150px] relative mt-6 rounded overflow-hidden">
-                <img
+                <Image
                   src="/images/hero-bg.webp"
                   alt="Ritual de Cuidado"
-                  className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 mix-blend-luminosity hover:opacity-80 transition-opacity duration-700"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover grayscale opacity-40 mix-blend-luminosity hover:opacity-80 transition-opacity duration-700"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-surface-container-high via-transparent to-transparent" />
               </div>
