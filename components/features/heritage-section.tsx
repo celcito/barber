@@ -2,13 +2,13 @@ import Image from "next/image";
 
 const features = [
   {
-    icon: "scissors",
+    icon: "content_cut",
     title: "Mestros Artesãos",
     description:
       "Nossos barbeiros são artesãos com décadas de experiência, dedicados à perfeição em cada detalhe.",
   },
   {
-    icon: "local_barber",
+    icon: "local_bar",
     title: "Salão Privado",
     description:
       "Destilados premium e espresso complimentary para uma experiência de verdadeiro luxo.",
@@ -27,7 +27,7 @@ export function HeritageSection() {
       <div className="max-w-container-max mx-auto px-margin-desktop md:px-margin-desktop">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-stack-lg items-center">
           {/* Image */}
-          <div className="relative aspect-[4/5] rounded overflow-hidden">
+          <div className="relative aspect-4/5 rounded overflow-hidden">
             <Image
               src="/images/barber-portrait.webp"
               alt="Barbeiro mestre"

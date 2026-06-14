@@ -12,7 +12,7 @@ export function LocationSection() {
       <div className="max-w-container-max mx-auto px-margin-desktop md:px-margin-desktop">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-stack-lg">
           {/* Map placeholder */}
-          <div className="relative aspect-[4/3] lg:aspect-auto rounded overflow-hidden bg-surface-container border border-outline-variant flex items-center justify-center">
+          <div className="relative aspect-4/3 lg:aspect-auto rounded overflow-hidden bg-surface-container border border-outline-variant flex items-center justify-center">
             <div className="text-center p-stack-md">
               <span className="material-symbols-outlined text-primary text-[48px] mb-stack-sm block">
                 map

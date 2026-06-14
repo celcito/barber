@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+
 
 interface BookingData {
   servico: { nome: string; duracao_min: number; preco: number } | null;

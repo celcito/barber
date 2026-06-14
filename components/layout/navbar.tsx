@@ -44,7 +44,7 @@ export function Navbar() {
             </a>
           ))}
           <Link
-            href="/login"
+            href="/barbearia-teste"
             className="bg-primary text-on-primary px-5 py-2.5 font-label-md text-label-md uppercase tracking-widest rounded hover:brightness-110 active:scale-[0.98] transition-all shadow-card"
           >
             Agendar
@@ -78,7 +78,7 @@ export function Navbar() {
               </a>
             ))}
             <Link
-              href="/login"
+              href="/barbearia-teste"
               className="bg-primary text-on-primary px-6 py-3 font-label-md text-label-md uppercase tracking-widest rounded hover:brightness-110 transition-all"
               onClick={() => setMenuOpen(false)}
             >

@@ -13,21 +13,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
 }
 
-const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    "bg-primary text-on-primary hover:brightness-110 active:scale-[0.98] shadow-card",
-  secondary:
-    "border border-outline text-on-surface hover:bg-surface-container-highest",
-  ghost:
-    "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest",
-};
-
-const sizeStyles: Record<ButtonSize, string> = {
-  sm: "px-4 py-2 font-label-sm text-label-sm gap-2",
-  md: "px-6 py-3 font-label-md text-label-md gap-2.5",
-  lg: "px-8 py-4 font-label-md text-label-md gap-3 uppercase tracking-wider",
-};
-
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", loading, icon, children, disabled, ...props }, ref) => {
     return (

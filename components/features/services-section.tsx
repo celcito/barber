@@ -57,7 +57,7 @@ export function ServicesSection() {
                 <span className="font-display text-headline-sm text-primary">{s.price}</span>
                 <span className="dotted-leader" />
                 <Link
-                  href="/login"
+                  href="/barbearia-teste"
                   className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider hover:text-primary transition-colors shrink-0"
                 >
                   Agendar

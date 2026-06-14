@@ -20,7 +20,7 @@ function validateMagicBytes(buffer: ArrayBuffer): boolean {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 
-  for (const [, magic] of MAGIC_BYTES) {
+  for (const magic of Array.from(MAGIC_BYTES.values())) {
     if (hex.startsWith(magic)) return true;
   }
   return false;

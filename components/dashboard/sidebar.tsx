@@ -54,7 +54,7 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
         </div>
       </div>
 
-      <div className="mt-stack-lg space-y-base">
+      <div className="mt-stack-sm space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -63,7 +63,7 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
               href={item.href}
               onClick={handleClose}
               className={cn(
-                "flex items-center gap-stack-sm px-stack-sm py-3 rounded-lg transition-all duration-200 font-label-md text-label-md",
+                "flex items-center gap-stack-sm px-stack-sm py-2.5 rounded-lg transition-all duration-200 font-label-md text-label-md",
                 isActive
                   ? "bg-primary-container text-[#4e3700]"
                   : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest"
@@ -76,7 +76,7 @@ export function DashboardSidebar({ salaoNome }: DashboardSidebarProps) {
         })}
       </div>
 
-      <div className="border-t border-outline-variant pt-stack-md space-y-base mb-base">
+      <div className="mt-auto border-t border-outline-variant pt-stack-sm space-y-1 mb-base">
         <button
           onClick={() => { router.push("/dashboard/agenda/novo"); handleClose(); }}
           className="w-full py-3 px-base bg-primary text-on-primary font-label-md text-label-md rounded-lg hover:brightness-110 active:scale-95 transform-gpu will-change-transform transition-all"
