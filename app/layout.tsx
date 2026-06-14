@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Hanken_Grotesk } from "next/font/google";
 import MaterialSymbolsFont from "@/components/material-symbols-font";
+import { validateEnv } from "@/lib/logger";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -14,6 +15,8 @@ const hanken = Hanken_Grotesk({
   variable: "--font-body",
   display: "swap",
 });
+
+validateEnv();
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://agendafacil.com.br"),

@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { logger } from "./logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -9,8 +10,26 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, react }: SendEmailParams) {
+  if (process.env.EMAIL_DISABLED === "true") {
+    logger.info("email", "Email sending is disabled via env var");
+    return;
+  }
+
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM;
+
+  if (!apiKey || !from) {
+    logger.warn("email", "Resend not configured - skipping send", {
+      hasApiKey: !!apiKey,
+      hasFrom: !!from,
+      to,
+      subject,
+    });
+    return;
+  }
+
   await resend.emails.send({
-    from: process.env.RESEND_FROM!,
+    from,
     to,
     subject,
     react,

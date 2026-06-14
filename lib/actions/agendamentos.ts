@@ -6,6 +6,7 @@ import { getAuthUser } from "./auth";
 import { adminAgendamentoSchema, DIAS_SEMANA_MAP } from "@/lib/schemas/agendamento";
 import { sendWhatsApp } from "@/lib/zapi";
 import { sendConfirmationEmail, sendCancellationEmail } from "@/lib/email";
+import { logger, auditLog } from "@/lib/logger";
 
 export interface SlotDisponivel {
   horario: string;
@@ -14,19 +15,39 @@ export interface SlotDisponivel {
 }
 
 export async function cancelarAgendamento(id: string) {
+  logger.info("agendamento", "Cancelling appointment", { agendamentoId: id });
+
   const supabase = await createClient();
   const authResult = await supabase.auth.getUser();
   const userId = authResult.data?.user?.id;
-  if (!userId) return { error: "Não autenticado" };
+  if (!userId) {
+    logger.warn("agendamento", "Cancel failed: not authenticated", { agendamentoId: id });
+    return { error: "Não autenticado" };
+  }
 
-  const { data: agendamento } = await supabase
+  const { data: agendamento, error: fetchError } = await supabase
     .from("agendamentos")
     .select("cliente_nome, cliente_email, servico_id, profissional_id, inicio")
     .eq("id", id)
     .eq("salao_id", userId)
     .single();
 
-  if (!agendamento) return { error: "Agendamento não encontrado" };
+  if (fetchError) {
+    logger.error("agendamento", "Failed to fetch appointment for cancellation", {
+      agendamentoId: id,
+      userId,
+      error: fetchError.message,
+      code: fetchError.code,
+    });
+  }
+
+  if (!agendamento) {
+    logger.warn("agendamento", "Appointment not found for cancellation", {
+      agendamentoId: id,
+      userId,
+    });
+    return { error: "Agendamento não encontrado" };
+  }
 
   const { error } = await supabase
     .from("agendamentos")
@@ -34,7 +55,27 @@ export async function cancelarAgendamento(id: string) {
     .eq("id", id)
     .eq("salao_id", userId);
 
-  if (error) return { error: error.message };
+  if (error) {
+    logger.error("agendamento", "Failed to cancel appointment", {
+      agendamentoId: id,
+      userId,
+      error: error.message,
+      code: error.code,
+    });
+    return { error: error.message };
+  }
+
+  logger.info("agendamento", "Appointment cancelled successfully", {
+    agendamentoId: id,
+    userId,
+    clienteNome: agendamento.cliente_nome,
+  });
+
+  auditLog("agendamento.cancelado", {
+    agendamentoId: id,
+    salaoId: userId,
+    clienteNome: agendamento.cliente_nome,
+  });
 
   if (agendamento.cliente_email) {
     const { data: servico } = await supabase
@@ -76,7 +117,13 @@ export async function cancelarAgendamento(id: string) {
       data: dataFormatada,
       horario: horarioFormatado,
       salaoNome: salao?.nome || "Salão",
-    }).catch((err) => console.error("[Email] Send error:", err));
+    }).catch((err) => {
+      logger.error("email", "Failed to send cancellation email", {
+        error: err instanceof Error ? err.message : String(err),
+        agendamentoId: id,
+        to: agendamento.cliente_email,
+      });
+    });
   }
 
   revalidatePath("/dashboard");
@@ -308,8 +355,13 @@ export async function getHorariosDisponiveisAdmin(
 }
 
 export async function createAgendamentoAdmin(formData: FormData) {
+  logger.info("agendamento", "Starting admin appointment creation");
+
   const { supabase, user } = await getAuthUser();
-  if (!user) return { error: { _form: ["Não autenticado"] } };
+  if (!user) {
+    logger.warn("agendamento", "Admin appointment creation failed: not authenticated");
+    return { error: { _form: ["Não autenticado"] } };
+  }
 
   const parsed = adminAgendamentoSchema.safeParse({
     nome: formData.get("nome"),
@@ -318,6 +370,10 @@ export async function createAgendamentoAdmin(formData: FormData) {
   });
 
   if (!parsed.success) {
+    logger.warn("agendamento", "Admin client validation failed", {
+      errors: parsed.error.flatten().fieldErrors,
+      userId: user.id,
+    });
     return { error: parsed.error.flatten().fieldErrors };
   }
 
@@ -326,32 +382,75 @@ export async function createAgendamentoAdmin(formData: FormData) {
   const dataStr = formData.get("data") as string;
   const horario = formData.get("horario") as string;
 
+  logger.debug("agendamento", "Admin form data extracted", {
+    userId: user.id,
+    servicoId,
+    profissionalId,
+    data: dataStr,
+    horario,
+    clienteNome: parsed.data.nome,
+  });
+
   if (!servicoId || !dataStr || !horario) {
+    logger.warn("agendamento", "Admin incomplete form data", {
+      servicoId: !!servicoId,
+      data: !!dataStr,
+      horario: !!horario,
+      userId: user.id,
+    });
     return { error: { _form: ["Dados incompletos para agendamento"] } };
   }
 
-  const { data: servico } = await supabase
+  const { data: servico, error: servicoError } = await supabase
     .from("servicos")
     .select("duracao_min, nome")
     .eq("id", servicoId)
     .single();
 
-  if (!servico) {
+  if (servicoError) {
+    logger.error("agendamento", "Admin failed to fetch service", {
+      servicoId,
+      error: servicoError.message,
+      code: servicoError.code,
+      userId: user.id,
+    });
     return { error: { _form: ["Serviço não encontrado"] } };
   }
 
-  const { data: profissional } = profissionalId
+  if (!servico) {
+    logger.warn("agendamento", "Admin service not found", {
+      servicoId,
+      userId: user.id,
+    });
+    return { error: { _form: ["Serviço não encontrado"] } };
+  }
+
+  const { data: profissional, error: profError } = profissionalId
     ? await supabase
         .from("profissionais")
         .select("nome")
         .eq("id", profissionalId)
         .single()
-    : { data: null };
+    : { data: null, error: null };
+
+  if (profError) {
+    logger.warn("agendamento", "Admin failed to fetch professional", {
+      profissionalId,
+      error: profError.message,
+      userId: user.id,
+    });
+  }
 
   const inicio = new Date(`${dataStr}T${horario}:00`);
   const fim = new Date(inicio.getTime() + servico.duracao_min * 60000);
 
-  const { data: conflito } = await supabase
+  logger.debug("agendamento", "Admin checking for conflicts", {
+    userId: user.id,
+    inicio: inicio.toISOString(),
+    fim: fim.toISOString(),
+  });
+
+  const { data: conflito, error: conflitoError } = await supabase
     .from("agendamentos")
     .select("id")
     .eq("salao_id", user.id)
@@ -359,9 +458,32 @@ export async function createAgendamentoAdmin(formData: FormData) {
     .gte("inicio", inicio.toISOString())
     .lt("inicio", fim.toISOString());
 
+  if (conflitoError) {
+    logger.error("agendamento", "Admin failed to check conflicts", {
+      error: conflitoError.message,
+      code: conflitoError.code,
+      userId: user.id,
+    });
+    return { error: { _form: ["Erro ao verificar horário"] } };
+  }
+
   if (conflito && conflito.length > 0) {
+    logger.info("agendamento", "Admin time slot conflict detected", {
+      conflitos: conflito.length,
+      inicio: inicio.toISOString(),
+      fim: fim.toISOString(),
+      userId: user.id,
+    });
     return { error: { _form: ["Este horário já foi reservado"] } };
   }
+
+  logger.info("agendamento", "Admin inserting appointment", {
+    userId: user.id,
+    servicoId,
+    profissionalId: profissionalId || null,
+    inicio: inicio.toISOString(),
+    fim: fim.toISOString(),
+  });
 
   const { error } = await supabase
     .from("agendamentos")
@@ -378,8 +500,36 @@ export async function createAgendamentoAdmin(formData: FormData) {
     });
 
   if (error) {
+    logger.error("agendamento", "Admin failed to insert appointment", {
+      error: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+      userId: user.id,
+      servicoId,
+      profissionalId: profissionalId || null,
+      inicio: inicio.toISOString(),
+      fim: fim.toISOString(),
+    });
     return { error: { _form: [error.message] } };
   }
+
+  logger.info("agendamento", "Admin appointment created successfully", {
+    salaoId: user.id,
+    clienteNome: parsed.data.nome,
+    servico: servico.nome,
+  });
+
+  auditLog("agendamento.criado", {
+    source: "admin",
+    salaoId: user.id,
+    servicoId,
+    profissionalId: profissionalId || null,
+    clienteNome: parsed.data.nome,
+    clienteWhatsapp: parsed.data.whatsapp,
+    inicio: inicio.toISOString(),
+    fim: fim.toISOString(),
+  });
 
   const { data: salao } = await supabase
     .from("saloes")
@@ -423,7 +573,12 @@ export async function createAgendamentoAdmin(formData: FormData) {
   Promise.all([
     sendWhatsApp(parsed.data.whatsapp, msgCliente),
     ...(salao?.whatsapp ? [sendWhatsApp(salao.whatsapp, msgDono)] : []),
-  ]).catch((err) => console.error("[WhatsApp] Send error:", err));
+  ]).catch((err) => {
+    logger.error("whatsapp", "Admin failed to send WhatsApp messages", {
+      error: err instanceof Error ? err.message : String(err),
+      userId: user.id,
+    });
+  });
 
   if (parsed.data.email) {
     sendConfirmationEmail({
@@ -434,7 +589,13 @@ export async function createAgendamentoAdmin(formData: FormData) {
       data: dataFormatada,
       horario: horarioFormatado,
       salaoNome: salao?.nome || "Salão",
-    }).catch((err) => console.error("[Email] Send error:", err));
+    }).catch((err) => {
+      logger.error("email", "Admin failed to send confirmation email", {
+        error: err instanceof Error ? err.message : String(err),
+        userId: user.id,
+        to: parsed.data.email,
+      });
+    });
   }
 
   revalidatePath("/dashboard/agenda");

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { clienteSchema, DIAS_SEMANA_MAP } from "@/lib/schemas/agendamento";
 import { sendWhatsApp } from "@/lib/zapi";
 import { sendConfirmationEmail } from "@/lib/email";
+import { logger, auditLog } from "@/lib/logger";
 import { z } from "zod";
 
 const slugSchema = z.string().min(1).max(100).regex(/^[a-z0-9-]+$/);
@@ -273,7 +274,23 @@ export async function getHorariosDisponiveis(
 }
 
 export async function createAgendamento(formData: FormData) {
-  const supabase = await createClient();
+  const requestMeta = {
+    userAgent: formData.get("_ua") as string | null,
+    timestamp: new Date().toISOString(),
+  };
+
+  logger.info("agendamento", "Starting public appointment creation", requestMeta);
+
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch (err) {
+    logger.error("agendamento", "Failed to create Supabase client", {
+      error: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    });
+    return { error: { _form: ["Erro de conexão com o servidor"] } };
+  }
 
   const parsed = clienteSchema.safeParse({
     nome: formData.get("nome"),
@@ -282,6 +299,9 @@ export async function createAgendamento(formData: FormData) {
   });
 
   if (!parsed.success) {
+    logger.warn("agendamento", "Client validation failed", {
+      errors: parsed.error.flatten().fieldErrors,
+    });
     return { error: parsed.error.flatten().fieldErrors };
   }
 
@@ -291,7 +311,22 @@ export async function createAgendamento(formData: FormData) {
   const dataStr = formData.get("data") as string;
   const horario = formData.get("horario") as string;
 
+  logger.debug("agendamento", "Form data extracted", {
+    salaoId,
+    servicoId,
+    profissionalId,
+    data: dataStr,
+    horario,
+    clienteNome: parsed.data.nome,
+  });
+
   if (!salaoId || !servicoId || !dataStr || !horario) {
+    logger.warn("agendamento", "Incomplete form data", {
+      salaoId: !!salaoId,
+      servicoId: !!servicoId,
+      data: !!dataStr,
+      horario: !!horario,
+    });
     return { error: { _form: ["Dados incompletos para agendamento"] } };
   }
 
@@ -301,37 +336,76 @@ export async function createAgendamento(formData: FormData) {
   const parsedData = dateSchema.safeParse(dataStr);
 
   if (!parsedSalaoId.success || !parsedServicoId.success || !parsedData.success) {
+    logger.warn("agendamento", "UUID/date validation failed", {
+      salaoIdValid: parsedSalaoId.success,
+      servicoIdValid: parsedServicoId.success,
+      dataValid: parsedData.success,
+    });
     return { error: { _form: ["Dados inválidos"] } };
   }
 
-  const { data: servico } = await supabase
+  const { data: servico, error: servicoError } = await supabase
     .from("servicos")
     .select("duracao_min, nome")
     .eq("id", parsedServicoId.data)
     .single();
 
-  if (!servico) {
+  if (servicoError) {
+    logger.error("agendamento", "Failed to fetch service", {
+      servicoId: parsedServicoId.data,
+      error: servicoError.message,
+      code: servicoError.code,
+    });
     return { error: { _form: ["Serviço não encontrado"] } };
   }
 
-  const { data: profissional } = parsedProfissionalId
+  if (!servico) {
+    logger.warn("agendamento", "Service not found", {
+      servicoId: parsedServicoId.data,
+    });
+    return { error: { _form: ["Serviço não encontrado"] } };
+  }
+
+  const { data: profissional, error: profError } = parsedProfissionalId
     ? await supabase
         .from("profissionais")
         .select("nome")
         .eq("id", parsedProfissionalId.data)
         .single()
-    : { data: null };
+    : { data: null, error: null };
 
-  const { data: salao } = await supabase
+  if (profError) {
+    logger.warn("agendamento", "Failed to fetch professional", {
+      profissionalId: parsedProfissionalId?.data,
+      error: profError.message,
+    });
+  }
+
+  const { data: salao, error: salaoError } = await supabase
     .from("saloes")
     .select("nome, whatsapp")
     .eq("id", parsedSalaoId.data)
     .single();
 
+  if (salaoError) {
+    logger.error("agendamento", "Failed to fetch salon", {
+      salaoId: parsedSalaoId.data,
+      error: salaoError.message,
+      code: salaoError.code,
+    });
+    return { error: { _form: ["Salão não encontrado"] } };
+  }
+
   const inicio = new Date(`${parsedData.data}T${horario}:00`);
   const fim = new Date(inicio.getTime() + servico.duracao_min * 60000);
 
-  const { data: conflito } = await supabase
+  logger.debug("agendamento", "Checking for conflicts", {
+    salaoId: parsedSalaoId.data,
+    inicio: inicio.toISOString(),
+    fim: fim.toISOString(),
+  });
+
+  const { data: conflito, error: conflitoError } = await supabase
     .from("agendamentos")
     .select("id")
     .eq("salao_id", parsedSalaoId.data)
@@ -339,9 +413,30 @@ export async function createAgendamento(formData: FormData) {
     .gte("inicio", inicio.toISOString())
     .lt("inicio", fim.toISOString());
 
+  if (conflitoError) {
+    logger.error("agendamento", "Failed to check conflicts", {
+      error: conflitoError.message,
+      code: conflitoError.code,
+    });
+    return { error: { _form: ["Erro ao verificar horário"] } };
+  }
+
   if (conflito && conflito.length > 0) {
+    logger.info("agendamento", "Time slot conflict detected", {
+      conflitos: conflito.length,
+      inicio: inicio.toISOString(),
+      fim: fim.toISOString(),
+    });
     return { error: { _form: ["Este horário já foi reservado"] } };
   }
+
+  logger.info("agendamento", "Inserting appointment into database", {
+    salaoId: parsedSalaoId.data,
+    servicoId: parsedServicoId.data,
+    profissionalId: parsedProfissionalId?.data || null,
+    inicio: inicio.toISOString(),
+    fim: fim.toISOString(),
+  });
 
   const { data: novoAgendamento, error } = await supabase
     .from("agendamentos")
@@ -360,9 +455,37 @@ export async function createAgendamento(formData: FormData) {
     .single();
 
   if (error) {
-    console.error("[Agendamento] Error:", error.message, error.details, error.hint);
+    logger.error("agendamento", "Failed to insert appointment", {
+      error: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+      salaoId: parsedSalaoId.data,
+      servicoId: parsedServicoId.data,
+      profissionalId: parsedProfissionalId?.data || null,
+      inicio: inicio.toISOString(),
+      fim: fim.toISOString(),
+    });
     return { error: { _form: [`Erro ao criar agendamento: ${error.message}`] } };
   }
+
+  logger.info("agendamento", "Appointment created successfully", {
+    agendamentoId: novoAgendamento?.id,
+    salaoId: parsedSalaoId.data,
+    clienteNome: parsed.data.nome,
+    servico: servico.nome,
+  });
+
+  auditLog("agendamento.criado", {
+    agendamentoId: novoAgendamento?.id,
+    salaoId: parsedSalaoId.data,
+    servicoId: parsedServicoId.data,
+    profissionalId: parsedProfissionalId?.data || null,
+    clienteNome: parsed.data.nome,
+    clienteWhatsapp: parsed.data.whatsapp,
+    inicio: inicio.toISOString(),
+    fim: fim.toISOString(),
+  });
 
   const dataFormatada = inicio.toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -399,7 +522,12 @@ export async function createAgendamento(formData: FormData) {
   Promise.all([
     sendWhatsApp(parsed.data.whatsapp, msgCliente),
     ...(salao?.whatsapp ? [sendWhatsApp(salao.whatsapp, msgDono)] : []),
-  ]).catch((err) => console.error("[WhatsApp] Send error:", err));
+  ]).catch((err) => {
+    logger.error("whatsapp", "Failed to send WhatsApp messages", {
+      error: err instanceof Error ? err.message : String(err),
+      agendamentoId: novoAgendamento?.id,
+    });
+  });
 
   if (parsed.data.email) {
     sendConfirmationEmail({
@@ -410,7 +538,13 @@ export async function createAgendamento(formData: FormData) {
       data: dataFormatada,
       horario: horarioFormatado,
       salaoNome: salao?.nome || "Salão",
-    }).catch((err) => console.error("[Email] Send error:", err));
+    }).catch((err) => {
+      logger.error("email", "Failed to send confirmation email", {
+        error: err instanceof Error ? err.message : String(err),
+        agendamentoId: novoAgendamento?.id,
+        to: parsed.data.email,
+      });
+    });
   }
 
   revalidatePath(`/${formData.get("slug")}`);
