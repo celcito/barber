@@ -99,8 +99,8 @@ export async function POST(req: Request) {
       fim: new Date(a.fim).getTime(),
     }));
 
-  const abertura = new Date(`${data}T${configDia.inicio}:00`).getTime();
-  const fechamento = new Date(`${data}T${configDia.fim}:00`).getTime();
+  const abertura = new Date(`${data}T${configDia.inicio}`).getTime();
+  const fechamento = new Date(`${data}T${configDia.fim}`).getTime();
 
   function slotOcupado(slotInicio: number, slotFim: number) {
     return ocupados.some((o) => slotInicio < o.fim && slotFim > o.inicio);

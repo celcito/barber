@@ -43,6 +43,10 @@ export function StepTime({
       (slots) => {
         setSlots(slots);
         setLoadingSlots(false);
+      },
+      () => {
+        setSlots([]);
+        setLoadingSlots(false);
       }
     );
   }, [salaoId, profissionalId, servicoId, selectedDate]);

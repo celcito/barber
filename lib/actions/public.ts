@@ -148,8 +148,8 @@ async function calcularSlotsParaProfissional(
       fim: new Date(a.fim).getTime(),
     }));
 
-  const abertura = new Date(`${data}T${configDia.inicio}:00`).getTime();
-  const fechamento = new Date(`${data}T${configDia.fim}:00`).getTime();
+  const abertura = new Date(`${data}T${configDia.inicio}`).getTime();
+  const fechamento = new Date(`${data}T${configDia.fim}`).getTime();
 
   function slotIsBloqueado(slotInicio: number, slotFim: number) {
     return excessosBloqueio.some((exc: { data_inicio: string; data_fim: string }) => {
@@ -159,10 +159,19 @@ async function calcularSlotsParaProfissional(
     });
   }
 
+  const agora = Date.now();
+  const hoje = new Date().toISOString().split("T")[0];
+
   const slots: string[] = [];
   let current = abertura;
   while (current + duracaoMin * 60000 <= fechamento) {
     const slotFim = current + duracaoMin * 60000;
+
+    if (data === hoje && current <= agora) {
+      current += intervalo * 60000;
+      continue;
+    }
+
     if (!slotIsBloqueado(current, slotFim)) {
       const conflito = ocupados.some(
         (o) => current < o.fim && slotFim > o.inicio
