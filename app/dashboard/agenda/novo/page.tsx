@@ -1,6 +1,8 @@
 import { getServicosAdmin, getProfissionaisAdmin } from "@/lib/actions/agendamentos";
 import { AdminBookingForm } from "@/components/features/admin-booking-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function NovoAgendamentoPage() {
   const [servicos, profissionais] = await Promise.all([
     getServicosAdmin(),
