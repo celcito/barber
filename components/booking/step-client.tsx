@@ -87,7 +87,7 @@ export function StepClient({
         </div>
       )}
 
-      <form id="cliente-form" onSubmit={handleSubmit} className="space-y-stack-sm">
+      <form id="cliente-form" onSubmit={handleSubmit} className="space-y-stack-sm w-full max-w-full">
         <Input
           label="Seu nome"
           name="nome"

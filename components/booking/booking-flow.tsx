@@ -96,12 +96,12 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
 
   return (
     <div className="flex flex-col min-h-dynamic">
-      <div className="px-margin-desktop py-stack-md">
+      <div className="px-margin-mobile md:px-margin-desktop py-stack-md">
         <Stepper steps={steps} currentStep={currentStep} />
       </div>
 
-      <div className="flex-1 px-margin-desktop pb-stack-md overflow-hidden">
-        <div className="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+      <div className="flex-1 px-margin-mobile md:px-margin-desktop pb-stack-md overflow-hidden">
+        <div className="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter">
           <div key={currentStep} className="lg:col-span-7 h-full animate-fade-in" style={{ animationDuration: "400ms" }}>
             {currentStep === 0 && (
               <StepService
@@ -251,7 +251,7 @@ export function BookingFlow({ salao }: { salao: SalaoData }) {
       </div>
 
       {currentStep > 0 && (
-        <div className="px-margin-desktop py-stack-md">
+        <div className="px-margin-mobile md:px-margin-desktop py-stack-md">
           <div className="max-w-container-max mx-auto">
             <Button variant="ghost" onClick={prevStep} icon={<span className="material-symbols-outlined text-[18px]">arrow_back</span>}>
               Voltar

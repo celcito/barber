@@ -15,7 +15,7 @@ const legalLinks = [
 export function Footer() {
   return (
     <footer className="bg-surface-container-lowest w-full py-stack-lg border-t border-outline-variant">
-      <div className="max-w-container-max mx-auto px-margin-desktop md:px-margin-desktop">
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-stack-lg mb-stack-lg">
           {/* Brand */}
           <div>
@@ -63,12 +63,12 @@ export function Footer() {
           <p className="font-body-md text-body-md text-on-surface-variant text-center md:text-left">
             &copy; 2026 AgendaFácil. Todos os direitos reservados.
           </p>
-          <div className="flex gap-stack-md">
+          <div className="flex flex-wrap justify-center gap-x-stack-md gap-y-2">
             {legalLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
+                className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors py-2"
               >
                 {link.label}
               </a>

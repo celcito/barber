@@ -74,7 +74,7 @@ export function BookingConfirmation({
         </header>
 
         {/* Main Content */}
-        <main className="px-stack-lg py-stack-lg">
+        <main className="px-margin-mobile md:px-stack-lg py-stack-lg">
           {/* Hero Image */}
           <div className="mb-stack-md relative h-48 w-full overflow-hidden rounded-xs group">
             <img 

@@ -18,6 +18,12 @@ const hanken = Hanken_Grotesk({
 
 validateEnv();
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://agendafacil.com.br"),
   title: {

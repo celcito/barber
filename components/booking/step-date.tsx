@@ -112,7 +112,7 @@ export function StepDate({ selectedDate, onSelect }: StepDateProps) {
           {calendarDays.map((day, i) => {
             if (!day.isCurrentMonth) {
               return (
-                <div key={i} className="h-10 flex items-center justify-center text-on-surface-variant/30 font-label-sm text-label-sm">
+                <div key={i} className="min-h-[44px] flex items-center justify-center text-on-surface-variant/30 font-label-sm text-label-sm">
                   {day.day}
                 </div>
               );
@@ -127,7 +127,7 @@ export function StepDate({ selectedDate, onSelect }: StepDateProps) {
                   if (!day.disabled) onSelect(day.dateStr);
                 }}
                 className={cn(
-                  "h-10 flex items-center justify-center font-label-sm text-label-sm rounded transition-all",
+                  "min-h-[44px] flex items-center justify-center font-label-sm text-label-sm rounded transition-all w-full",
                   isSelected
                     ? "bg-primary text-on-primary font-bold"
                     : day.disabled 

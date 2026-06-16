@@ -64,7 +64,7 @@ export function StepTime({
         </p>
 
         {loadingSlots ? (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <Skeleton key={i} className="h-10 rounded" />
             ))}
@@ -74,7 +74,7 @@ export function StepTime({
             Nenhum horário disponível para esta data.
           </p>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {slots.map((slot) => {
               const isSelected = selectedTime === slot.horario;
               return (
@@ -82,7 +82,7 @@ export function StepTime({
                   key={slot.horario}
                   onClick={() => onSelect(slot)}
                   className={cn(
-                    "py-2 rounded font-label-sm text-label-sm transition-all flex flex-col items-center cursor-pointer",
+                    "py-3 sm:py-2 rounded font-label-sm text-label-sm transition-all flex flex-col items-center cursor-pointer min-h-[44px]",
                     isSelected
                       ? "border border-primary bg-primary/10 text-primary"
                       : "border border-outline-variant hover:border-primary hover:text-primary text-on-surface"
