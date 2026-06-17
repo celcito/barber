@@ -1,8 +1,6 @@
 import { Resend } from "resend";
 import { logger } from "./logger";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 interface SendEmailParams {
   to: string;
   subject: string;
@@ -27,6 +25,8 @@ export async function sendEmail({ to, subject, react }: SendEmailParams) {
     });
     return;
   }
+
+  const resend = new Resend(apiKey);
 
   await resend.emails.send({
     from,
