@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { createAgendamento } from "@/lib/actions/public";
 
 interface StepClientProps {
@@ -42,12 +43,20 @@ export function StepClient({
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [lgpdConsent, setLgpdConsent] = useState(false);
+  const [lgpdError, setLgpdError] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitting(true);
     setErrors({});
     setFormError("");
+
+    if (!lgpdConsent) {
+      setLgpdError(true);
+      return;
+    }
+    setLgpdError(false);
+    setSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
     formData.set("salao_id", salaoId);
@@ -60,6 +69,7 @@ export function StepClient({
     formData.set("data", data);
     formData.set("horario", horario);
     formData.set("slug", slug);
+    formData.set("lgpd_consent", "true");
 
     const result = await createAgendamento(formData);
 
@@ -129,17 +139,19 @@ export function StepClient({
           error={errors.email?.[0]}
         />
 
-        <div className="flex items-start gap-3 pt-4">
-          <input 
-            type="checkbox" 
-            id="lgpd-consent" 
-            name="lgpd-consent" 
-            required 
-            className="mt-0.5 w-4 h-4 rounded border-outline bg-transparent text-primary focus:ring-primary focus:ring-offset-surface cursor-pointer shrink-0"
+        <div className="pt-4">
+          <Checkbox
+            id="lgpd-consent"
+            size="sm"
+            checked={lgpdConsent}
+            onCheckedChange={(v) => {
+              setLgpdConsent(v);
+              if (v) setLgpdError(false);
+            }}
+            error={lgpdError}
+            label="Concordo com a LGPD"
+            description="Autorizo o uso dos meus dados (Nome, WhatsApp e E-mail) para fins de agendamento, comunicação sobre o serviço e gestão de atendimento, em conformidade com a Lei Geral de Proteção de Dados."
           />
-          <label htmlFor="lgpd-consent" className="font-body-sm text-[12px] text-on-surface-variant leading-relaxed cursor-pointer select-none">
-            Concordo com o uso dos meus dados (Nome, WhatsApp e E-mail) para fins de agendamento, comunicação sobre o serviço e gestão de atendimento, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
-          </label>
         </div>
       </form>
     </div>

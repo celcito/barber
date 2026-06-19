@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { updateProfissionalHorarios } from "@/lib/actions/profissionais";
 import { DIAS_SEMANA } from "@/lib/schemas/salao";
 import type { ProfissionalComHorarios, ProfissionalHorario } from "@/lib/actions/profissionais";
@@ -101,20 +102,14 @@ export function ScheduleEditor({ profissional, salaoHorarios, onClose }: Schedul
         </button>
       </div>
 
-      <label className="flex items-center gap-3 cursor-pointer mb-stack-md p-3 bg-surface-container-high rounded">
-        <input
-          type="checkbox"
+      <div className="mb-stack-md p-3 bg-surface-container-high rounded">
+        <Checkbox
           checked={usarHorariosSalao}
-          onChange={(e) => handleToggleUsarSalao(e.target.checked)}
-          className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"
+          onCheckedChange={handleToggleUsarSalao}
+          label="Usar horários do salão"
+          description="Herda os horários configurados nas configurações da barbearia"
         />
-        <div>
-          <span className="font-label-md text-label-md text-on-surface">Usar horários do salão</span>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">
-            Herda os horários configurados nas configurações da barbearia
-          </p>
-        </div>
-      </label>
+      </div>
 
       {usarHorariosSalao ? (
         <div className="p-3 bg-surface-container-high rounded text-center">
@@ -133,11 +128,10 @@ export function ScheduleEditor({ profissional, salaoHorarios, onClose }: Schedul
                 className="flex items-center justify-between py-2 border-b border-outline-variant/30"
               >
                 <div className="flex items-center gap-3 w-1/3">
-                  <input
-                    type="checkbox"
+                  <Checkbox
+                    size="sm"
                     checked={config?.aberto ?? true}
-                    onChange={(e) => updateDiaConfig(dia, "aberto", e.target.checked)}
-                    className="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary"
+                    onCheckedChange={(v) => updateDiaConfig(dia, "aberto", v)}
                   />
                   <span className="font-label-md text-label-md text-on-surface">
                     {dia.charAt(0).toUpperCase() + dia.slice(1, 3)}

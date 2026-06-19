@@ -120,5 +120,6 @@ export async function updateSalao(formData: FormData) {
   console.log("[updateSalao] save OK, slug:", parsed.data.slug);
   revalidatePath("/dashboard/configuracoes");
   revalidatePath("/" + parsed.data.slug);
+  revalidatePath("/");
   return { success: true };
 }

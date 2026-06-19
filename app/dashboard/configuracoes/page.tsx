@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { getSalao, updateSalao } from "@/lib/actions/salao";
 import { getHorarioExcessoes, createHorarioExcesso, deleteHorarioExcesso } from "@/lib/actions/horario-excessoes";
 import { DIAS_SEMANA } from "@/lib/schemas/salao";
@@ -138,7 +139,7 @@ export default function ConfiguracoesPage() {
 
     for (const dia of DIAS_SEMANA) {
       const checkbox = formEl.elements.namedItem(`horario_${dia}_aberto`) as HTMLInputElement | null;
-      if (checkbox?.checked) formData.set(`horario_${dia}_aberto`, "true");
+      if (checkbox?.value) formData.set(`horario_${dia}_aberto`, checkbox.value);
 
       const inicio = formEl.elements.namedItem(`horario_${dia}_inicio`) as HTMLInputElement | null;
       if (inicio) formData.set(`horario_${dia}_inicio`, inicio.value);
@@ -150,7 +151,7 @@ export default function ConfiguracoesPage() {
     const toggleFields = ["notificar_dono", "lembretes_ativos", "lembretes_email_ativos"];
     for (const name of toggleFields) {
       const cb = formEl.elements.namedItem(name) as HTMLInputElement | null;
-      if (cb?.checked) formData.set(name, "true");
+      if (cb?.value) formData.set(name, cb.value);
     }
 
     const result = await updateSalao(formData);
@@ -348,12 +349,10 @@ export default function ConfiguracoesPage() {
                   return (
                     <div key={dia} className="flex items-center justify-between py-3 border-b border-outline-variant/30 group hover:bg-surface-container-highest/20 transition-colors px-2">
                       <div className="w-1/3 flex items-center gap-4">
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           name={`horario_${dia}_aberto`}
                           value="true"
                           defaultChecked={config?.aberto ?? dia !== "domingo"}
-                          className="w-5 h-5 rounded border-outline bg-transparent text-primary focus:ring-primary focus:ring-offset-surface"
                         />
                         <span className="font-label-md text-label-md text-on-surface">{dia}</span>
                       </div>
