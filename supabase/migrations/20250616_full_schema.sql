@@ -28,7 +28,8 @@ CREATE TABLE profissionais (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   salao_id UUID NOT NULL REFERENCES saloes(id) ON DELETE CASCADE,
   nome TEXT NOT NULL,
-  ativo BOOLEAN DEFAULT TRUE
+  ativo BOOLEAN DEFAULT TRUE,
+  foto_url TEXT
 );
 
 CREATE TABLE profissional_horarios (

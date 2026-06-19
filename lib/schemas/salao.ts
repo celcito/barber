@@ -7,7 +7,7 @@ export const salaoSchema = z.object({
     .min(3, "Mínimo 3 caracteres")
     .max(50, "Máximo 50 caracteres")
     .regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hífens"),
-  whatsapp: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "WhatsApp inválido (use (99) 99999-9999)").or(z.literal("")),
+  whatsapp: z.string().trim().max(30).or(z.literal("")),
 });
 
 export type SalaoFormData = z.infer<typeof salaoSchema>;

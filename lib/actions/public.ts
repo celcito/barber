@@ -316,7 +316,8 @@ export async function createAgendamento(formData: FormData) {
 
   const salaoId = formData.get("salao_id") as string;
   const servicoId = formData.get("servico_id") as string;
-  const profissionalId = formData.get("profissional_id") as string | null;
+  const profissionalIdRaw = formData.get("profissional_id");
+  const profissionalId = profissionalIdRaw && profissionalIdRaw !== "null" ? profissionalIdRaw as string : null;
   const dataStr = formData.get("data") as string;
   const horario = formData.get("horario") as string;
 
@@ -327,6 +328,7 @@ export async function createAgendamento(formData: FormData) {
     data: dataStr,
     horario,
     clienteNome: parsed.data.nome,
+    whatsappFormatado: parsed.data.whatsapp,
   });
 
   if (!salaoId || !servicoId || !dataStr || !horario) {
@@ -447,36 +449,45 @@ export async function createAgendamento(formData: FormData) {
     fim: fim.toISOString(),
   });
 
-  const { data: novoAgendamento, error } = await supabase
-    .from("agendamentos")
-    .insert({
-      salao_id: parsedSalaoId.data,
-      profissional_id: parsedProfissionalId?.data || null,
-      servico_id: parsedServicoId.data,
-      cliente_nome: parsed.data.nome,
-      cliente_whatsapp: parsed.data.whatsapp,
-      cliente_email: parsed.data.email || null,
-      inicio: inicio.toISOString(),
-      fim: fim.toISOString(),
-      status: "confirmado",
-    })
-    .select()
-    .single();
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
-  if (error) {
+  const insertResponse = await fetch(
+    `${supabaseUrl}/rest/v1/agendamentos`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: anonKey,
+        Authorization: `Bearer ${anonKey}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        salao_id: parsedSalaoId.data,
+        profissional_id: parsedProfissionalId?.data || null,
+        servico_id: parsedServicoId.data,
+        cliente_nome: parsed.data.nome,
+        cliente_whatsapp: parsed.data.whatsapp,
+        cliente_email: parsed.data.email || null,
+        inicio: inicio.toISOString(),
+        fim: fim.toISOString(),
+        status: "confirmado",
+      }),
+    }
+  );
+
+  if (!insertResponse.ok) {
+    const errorData = await insertResponse.json().catch(() => ({}));
     logger.error("agendamento", "Failed to insert appointment", {
-      error: error.message,
-      details: error.details,
-      hint: error.hint,
-      code: error.code,
-      salaoId: parsedSalaoId.data,
-      servicoId: parsedServicoId.data,
-      profissionalId: parsedProfissionalId?.data || null,
-      inicio: inicio.toISOString(),
-      fim: fim.toISOString(),
+      error: errorData.message || "Insert failed",
+      code: insertResponse.status,
     });
-    return { error: { _form: [`Erro ao criar agendamento: ${error.message}`] } };
+    return { error: { _form: [`Erro ao criar agendamento: ${errorData.message || "Erro desconhecido"}`] } };
   }
+
+  const location = insertResponse.headers.get("Location");
+  const extractedId = (location?.split("/").pop() ?? "unknown") as string;
+  const novoAgendamento: { id: string } = { id: extractedId };
 
   logger.info("agendamento", "Appointment created successfully", {
     agendamentoId: novoAgendamento?.id,

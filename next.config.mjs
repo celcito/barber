@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "qudupihspkxixoceiacs.supabase.co",
+        hostname: "tlggkdrlijxxvnpaokrc.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
       {
@@ -24,9 +24,9 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://qudupihspkxixoceiacs.supabase.co https://lh3.googleusercontent.com https://img.logo.dev",
+              "img-src 'self' data: blob: https://tlggkdrlijxxvnpaokrc.supabase.co https://lh3.googleusercontent.com https://img.logo.dev",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://qudupihspkxixoceiacs.supabase.co https://api.stripe.com https://api.resend.com https://api.z-api.io",
+              "connect-src 'self' https://tlggkdrlijxxvnpaokrc.supabase.co https://api.stripe.com https://api.resend.com https://api.z-api.io",
               "frame-src 'self' https://js.stripe.com",
               "object-src 'none'",
               "base-uri 'self'",

@@ -29,20 +29,26 @@ export async function updateSalao(formData: FormData) {
   const { supabase, user } = await getAuthUser();
   if (!user) redirect("/login");
 
-  const parsed = salaoSchema.safeParse({
+  const rawData = {
     nome: formData.get("nome"),
     slug: formData.get("slug"),
-    whatsapp: formData.get("whatsapp"),
-  });
+    whatsapp: formData.get("whatsapp") || "",
+  };
+  console.log("[updateSalao] rawData:", rawData);
+
+  const parsed = salaoSchema.safeParse(rawData);
 
   if (!parsed.success) {
+    console.log("[updateSalao] validation error:", parsed.error.flatten());
     return { error: parsed.error.flatten().fieldErrors };
   }
+
+  console.log("[updateSalao] parsed OK:", parsed.data);
 
   const horarios: Record<string, { aberto: boolean; inicio: string; fim: string }> = {};
   for (const dia of DIAS_SEMANA) {
     horarios[dia] = {
-      aberto: formData.get(`horario_${dia}_aberto`) === "true",
+      aberto: formData.has(`horario_${dia}_aberto`),
       inicio: (formData.get(`horario_${dia}_inicio`) as string) || "08:00",
       fim: (formData.get(`horario_${dia}_fim`) as string) || "19:00",
     };
@@ -81,15 +87,15 @@ export async function updateSalao(formData: FormData) {
     intervalo,
     redes_sociais,
     notificacoes: {
-      lembretes_ativos: formData.get("lembretes_ativos") === "true",
-      lembretes_email_ativos: formData.get("lembretes_email_ativos") === "true",
+      lembretes_ativos: formData.has("lembretes_ativos"),
+      lembretes_email_ativos: formData.has("lembretes_email_ativos"),
       intervalo_lembrete: parseInt(formData.get("intervalo_lembrete") as string) || 120,
       template: (formData.get("template") as string) || "Olá {{nome}}, lembrete do seu horário hoje às {{horario}} para {{servico}} no {{salao}}.",
-      notificar_dono: formData.get("notificar_dono") === "true",
+      notificar_dono: formData.has("notificar_dono"),
     },
   };
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("saloes")
     .update({
       nome: parsed.data.nome,
@@ -98,10 +104,21 @@ export async function updateSalao(formData: FormData) {
       endereco: endereco,
       config: configFinal,
     })
-    .eq("id", user.id);
+    .eq("id", user.id)
+    .select();
 
-  if (error) return { error: { _form: [error.message] } };
+  if (error) {
+    console.log("[updateSalao] supabase error:", error.message);
+    return { error: { _form: [error.message] } };
+  }
 
+  if (!data || data.length === 0) {
+    console.log("[updateSalao] no rows affected - user.id mismatch:", user.id);
+    return { error: { _form: ["Salão não encontrado para este usuário"] } };
+  }
+
+  console.log("[updateSalao] save OK, slug:", parsed.data.slug);
   revalidatePath("/dashboard/configuracoes");
+  revalidatePath("/" + parsed.data.slug);
   return { success: true };
 }

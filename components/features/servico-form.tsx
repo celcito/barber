@@ -72,8 +72,20 @@ export function ServicoForm({ onClose, initialData }: ServicoFormProps) {
           required
         />
       </div>
-      {errors._form && (
-        <p className="font-label-sm text-label-sm text-error">{errors._form[0]}</p>
+      {Object.keys(errors).length > 0 && (
+        <div className="p-4 rounded bg-error/10 border border-error/30">
+          <p className="font-label-md text-label-md text-error flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">error</span>
+            Corrija os erros antes de salvar.
+          </p>
+          <ul className="mt-2 space-y-1">
+            {Object.entries(errors).map(([field, msgs]) => (
+              <li key={field} className="font-body-sm text-body-sm text-error/80">
+                {field === "_form" ? msgs[0] : `${field}: ${msgs[0]}`}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="ghost" onClick={onClose}>

@@ -1,62 +1,84 @@
-# Plano de Implantação — Supabase (Remover Mocks)
+# Implantação Supabase — Barbearia
 
-## Status atual
+## Projeto ativo
+- **URL:** `https://tlggkdrlijxxvnpaokrc.supabase.co`
+- **Project ref:** `tlggkdrlijxxvnpaokrc`
+- **Região:** West US (Oregon)
 
-| Módulo | Supabase | Mock |
-|--------|----------|------|
-| Serviços (CRUD) | ✅ | ❌ |
-| Profissionais (CRUD) | ✅ | ❌ |
-| Agendamentos (CRUD) | ✅ | ❌ |
-| Agenda semanal | ✅ | ❌ |
-| Exceções de horário | ✅ | ❌ |
-| Configurações do salão | ✅ | ❌ |
-| Booking público (fluxo) | ✅ | ❌ |
-| Lista de clientes | ✅ | ❌ |
-| Auth + avatar upload | ✅ | ❌ |
-| Dashboard — KPIs | ✅ | ❌ |
-| Dashboard — Lista agendamentos | ✅ | ❌ |
-| Dashboard — Equipe em serviço | ✅ | ❌ |
-| Login — credenciais de teste | ✅ | ❌ |
-| Landing page (marketing) | — | estático (proposital) |
-| Config — valores default | — | fallback (proposital) |
+## Setup local
 
----
+```bash
+# 1. Copie o .env.example e preencha
+cp .env.example .env.local
 
-## Task 1 — Dashboard: KPIs dinâmicos
+# 2. Login no Supabase CLI
+supabase login
 
-**Arquivo:** `app/dashboard/page.tsx`
+# 3. Link ao projeto remoto
+supabase link --project-ref tlggkdrlijxxvnpaokrc --password '<db-password>'
 
-**O que substituir:**
-- `18` (agendamentos hoje, linha 67) → `agendamentosHoje.length`
-- `R$ 2.450` (receita estimada, linha 72) → `agendamentosHoje.reduce((acc, a) => acc + (a.servicos?.preco ?? 0), 0)`
-- `05` (clientes novos, linha 77) → query adicional: clientes únicos com `criado_em` no mês atual
+# 4. Aplique as migrations
+supabase db push
 
----
+# 5. Popule com dados de teste
+node scripts/seed.mjs
+```
 
-## Task 2 — Dashboard: Lista de agendamentos reais
+## Credenciais de teste (após seed)
 
-**Arquivo:** `app/dashboard/page.tsx`
+- **Email:** `teste@barbearia.com`
+- **Senha:** `123456`
+- **Slug:** `/barbearia-teste`
 
-**O que substituir:**
-- `agendamentosMock` (linhas 48-52) → `agendamentosHoje` (já consultado na linha 33, mas não usado)
-- Adaptar template JSX para campos: `cliente_nome`, `inicio` (formatar para HH:mm), `servicos.nome`, `servicos.duracao_min`
+## Migrations
 
----
+| Arquivo | Conteúdo |
+|---------|----------|
+| `20250616_full_schema.sql` | Schema completo (tabelas, RLS, trigger `handle_new_user`) |
+| `20250618_profissionais_foto_url.sql` | Coluna `foto_url` em profissionais |
 
-## Task 3 — Dashboard: Equipe em Serviço dinâmica
+## Como funciona a seed
 
-**Arquivo:** `app/dashboard/page.tsx`
+O usuário `postgres` do Supabase **não tem permissão** para:
+- `INSERT/DELETE/TRUNCATE` em `auth.users`
+- `ALTER TRIGGER` em `auth.users`
 
-**O que substituir:**
-- Julian Rossi / Arthur Vance hardcoded (linhas 104-121) → `profissionaisResult.data` (já consultado na linha 42)
-- Adicionar `foto_url` ao select da query de profissionais
-- Imagem fallback com avatar initials se não houver foto
+Por isso a seed SQL tradicional não funciona. A solução em `scripts/seed.mjs`:
 
----
+1. Usa a **service role key** (bypassa RLS) para excluir dados de teste existentes
+2. Cria o usuário via `auth.admin.createUser` (o trigger `handle_new_user` cria o salão)
+3. Atualiza o salão com nome/slug/config customizados
+4. Substitui profissionais e horários
+5. Mantém os serviços padrão (criados pelo trigger)
+6. Insere agendamentos de exemplo
 
-## Task 4 — Login: Credenciais de teste só em dev
+## Reset total
 
-**Arquivo:** `app/login/page.tsx`
+Se o banco ficar inconsistente:
 
-**O que substituir:**
-- Seção de credenciais de teste (linhas 140-144) → envolver em `process.env.NODE_ENV === 'development'`
+```sql
+-- 1. Rode supabase/reset.sql no SQL Editor
+-- 2. Crie uma conta nova via /cadastro
+-- 3. Trigger cria salão automaticamente
+```
+
+Ou via CLI:
+```bash
+node scripts/seed.mjs  # limpa e recria
+```
+
+## Validação E2E
+
+```bash
+# 1. Servidor dev
+npm run dev
+
+# 2. Fluxos a testar manualmente
+# - http://localhost:3000/login (teste@barbearia.com / 123456)
+# - http://localhost:3000/dashboard (KPIs, equipe, próximos)
+# - http://localhost:3000/dashboard/agenda
+# - http://localhost:3000/dashboard/profissionais
+# - http://localhost:3000/dashboard/servicos
+# - http://localhost:3000/dashboard/configuracoes
+# - http://localhost:3000/barbearia-teste (fluxo público)
+```

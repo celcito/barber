@@ -4,7 +4,7 @@ export const clienteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
   whatsapp: z
     .string()
-    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "WhatsApp inválido (use (99) 99999-9999)"),
+    .regex(/^\(\d{2}\) \d{4,5}[- ]\d{4,5}$/, "WhatsApp inválido (use (99) 99999-9999)"),
   email: z
     .string()
     .email("E-mail inválido")
@@ -17,7 +17,7 @@ export const adminAgendamentoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
   whatsapp: z
     .string()
-    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "WhatsApp inválido (use (99) 99999-9999)"),
+    .regex(/^\(\d{2}\) \d{4,5}[- ]\d{4,5}$/, "WhatsApp inválido (use (99) 99999-9999)"),
   email: z
     .string()
     .email("E-mail inválido")

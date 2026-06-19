@@ -12,6 +12,7 @@ interface AgendamentoDetalhesProps {
     id: string;
     cliente_nome: string;
     cliente_whatsapp: string;
+    cliente_email: string | null;
     inicio: string;
     fim: string;
     status: "confirmado" | "pendente" | "cancelado";
@@ -97,6 +98,18 @@ export function AgendamentoDetalhes({ agendamento, onClose }: AgendamentoDetalhe
               <div>
                 <p className="font-label-sm text-label-sm text-on-surface-variant">Profissional</p>
                 <p className="font-body-md text-body-md font-medium text-on-surface">{agendamento.profissionais.nome}</p>
+              </div>
+            </div>
+          )}
+
+          {agendamento.cliente_email && (
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary">mail</span>
+              </div>
+              <div>
+                <p className="font-label-sm text-label-sm text-on-surface-variant">E-mail</p>
+                <p className="font-body-md text-body-md font-medium text-on-surface">{agendamento.cliente_email}</p>
               </div>
             </div>
           )}

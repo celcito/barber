@@ -52,7 +52,11 @@ export function StepClient({
     const formData = new FormData(e.currentTarget);
     formData.set("salao_id", salaoId);
     formData.set("servico_id", servicoId);
-    if (profissionalId) formData.set("profissional_id", profissionalId);
+    if (profissionalId) {
+      formData.set("profissional_id", profissionalId);
+    } else {
+      formData.delete("profissional_id");
+    }
     formData.set("data", data);
     formData.set("horario", horario);
     formData.set("slug", slug);

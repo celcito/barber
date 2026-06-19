@@ -81,6 +81,10 @@ export default function ConfiguracoesPage() {
   const [success, setSuccess] = useState(false);
   const [excessoOpen, setExcessoOpen] = useState(false);
 
+  const [nome, setNome] = useState("");
+  const [slug, setSlug] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+
   async function loadSalao() {
     setLoading(true);
     const [salaoData, excessoData] = await Promise.all([
@@ -96,6 +100,9 @@ export default function ConfiguracoesPage() {
         endereco: salaoData.endereco as Record<string, string> | null,
         config: (salaoData.config ?? {}) as Record<string, unknown>,
       });
+      setNome(salaoData.nome || "");
+      setSlug(salaoData.slug || "");
+      setWhatsapp(salaoData.whatsapp || "");
     }
     setExcessoes(excessoData as HorarioExcesso[]);
     setLoading(false);
@@ -111,7 +118,41 @@ export default function ConfiguracoesPage() {
     setErrors({});
     setSuccess(false);
 
-    const formData = new FormData(e.currentTarget);
+    const formEl = e.currentTarget;
+    const formData = new FormData();
+
+    formData.set("nome", nome);
+    formData.set("slug", slug);
+    formData.set("whatsapp", whatsapp);
+
+    const fieldsToCopy = [
+      "endereco_logradouro", "endereco_numero", "endereco_complemento",
+      "endereco_bairro", "endereco_cidade", "endereco_estado", "endereco_cep",
+      "rede_instagram", "rede_facebook", "rede_tiktok", "rede_website",
+      "intervalo", "intervalo_lembrete", "template",
+    ];
+    for (const name of fieldsToCopy) {
+      const input = formEl.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+      if (input) formData.set(name, input.value);
+    }
+
+    for (const dia of DIAS_SEMANA) {
+      const checkbox = formEl.elements.namedItem(`horario_${dia}_aberto`) as HTMLInputElement | null;
+      if (checkbox?.checked) formData.set(`horario_${dia}_aberto`, "true");
+
+      const inicio = formEl.elements.namedItem(`horario_${dia}_inicio`) as HTMLInputElement | null;
+      if (inicio) formData.set(`horario_${dia}_inicio`, inicio.value);
+
+      const fim = formEl.elements.namedItem(`horario_${dia}_fim`) as HTMLInputElement | null;
+      if (fim) formData.set(`horario_${dia}_fim`, fim.value);
+    }
+
+    const toggleFields = ["notificar_dono", "lembretes_ativos", "lembretes_email_ativos"];
+    for (const name of toggleFields) {
+      const cb = formEl.elements.namedItem(name) as HTMLInputElement | null;
+      if (cb?.checked) formData.set(name, "true");
+    }
+
     const result = await updateSalao(formData);
 
     if (result?.error) {
@@ -220,9 +261,24 @@ export default function ConfiguracoesPage() {
           </div>
         )}
 
+        {Object.keys(errors).length > 0 && (
+          <div className="mb-6 p-4 rounded bg-error/10 border border-error/30">
+            <p className="font-label-md text-label-md text-error flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">error</span>
+              Corrija os erros antes de salvar.
+            </p>
+            <ul className="mt-2 space-y-1">
+              {Object.entries(errors).map(([field, msgs]) => (
+                <li key={field} className="font-body-sm text-body-sm text-error/80">
+                  {field === "_form" ? msgs[0] : `${field}: ${msgs[0]}`}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <form id="settings-form" onSubmit={handleSave} className="grid grid-cols-12 gap-gutter">
           <section className="col-span-12 lg:col-span-7 space-y-gutter">
-            {/* Perfil do Estabelecimento */}
             <div className="bg-surface-container-low border border-outline-variant p-8 rounded">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary">storefront</span>
@@ -235,11 +291,18 @@ export default function ConfiguracoesPage() {
                   </label>
                   <input
                     name="nome"
-                    defaultValue={salao?.nome || ""}
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
                     required
                     className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 transition-all outline-hidden"
                     placeholder="Ex: The Grooming Ritual"
                   />
+                  {errors.nome?.[0] && (
+                    <p className="font-label-sm text-label-sm text-error mt-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px]">error</span>
+                      {errors.nome[0]}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
@@ -251,7 +314,8 @@ export default function ConfiguracoesPage() {
                     </span>
                     <input
                       name="slug"
-                      defaultValue={salao?.slug || ""}
+                      value={slug}
+                      onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
                       required
                       pattern="[a-z0-9-]+"
                       title="Apenas letras minúsculas, números e hífens"
@@ -262,6 +326,12 @@ export default function ConfiguracoesPage() {
                   <p className="font-label-sm text-[11px] text-on-surface-variant mt-1">
                     Este é o link que você enviará para os clientes (apenas minúsculas e hífens).
                   </p>
+                  {errors.slug?.[0] && (
+                    <p className="font-label-sm text-label-sm text-error mt-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px]">error</span>
+                      {errors.slug[0]}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -278,11 +348,6 @@ export default function ConfiguracoesPage() {
                   return (
                     <div key={dia} className="flex items-center justify-between py-3 border-b border-outline-variant/30 group hover:bg-surface-container-highest/20 transition-colors px-2">
                       <div className="w-1/3 flex items-center gap-4">
-                        <input
-                          type="hidden"
-                          name={`horario_${dia}_aberto`}
-                          value="false"
-                        />
                         <input
                           type="checkbox"
                           name={`horario_${dia}_aberto`}
@@ -328,13 +393,11 @@ export default function ConfiguracoesPage() {
               </div>
             </div>
 
-            {/* Endereço do Estabelecimento */}
             <div className="bg-surface-container-low border border-outline-variant p-8 rounded">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary">location_on</span>
                 <h3 className="font-headline-sm text-headline-sm text-on-surface">Endereço do Estabelecimento</h3>
               </div>
-              
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-12 md:col-span-8 space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
@@ -347,7 +410,6 @@ export default function ConfiguracoesPage() {
                     placeholder="Av. Paulista"
                   />
                 </div>
-
                 <div className="col-span-12 md:col-span-4 space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     Número
@@ -359,7 +421,6 @@ export default function ConfiguracoesPage() {
                     placeholder="1000"
                   />
                 </div>
-
                 <div className="col-span-12 md:col-span-6 space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     Complemento
@@ -371,7 +432,6 @@ export default function ConfiguracoesPage() {
                     placeholder="Sala 42, Bloco B"
                   />
                 </div>
-
                 <div className="col-span-12 md:col-span-6 space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     Bairro
@@ -383,7 +443,6 @@ export default function ConfiguracoesPage() {
                     placeholder="Bela Vista"
                   />
                 </div>
-
                 <div className="col-span-12 md:col-span-5 space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     Cidade
@@ -395,7 +454,6 @@ export default function ConfiguracoesPage() {
                     placeholder="São Paulo"
                   />
                 </div>
-
                 <div className="col-span-12 md:col-span-3 space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     Estado
@@ -408,7 +466,6 @@ export default function ConfiguracoesPage() {
                     maxLength={2}
                   />
                 </div>
-
                 <div className="col-span-12 md:col-span-4 space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     CEP
@@ -444,7 +501,8 @@ export default function ConfiguracoesPage() {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant material-symbols-outlined">call</span>
                     <input
                       name="whatsapp"
-                      defaultValue={salao?.whatsapp || ""}
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value)}
                       className="w-full bg-surface-container-high border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 pl-11 transition-all outline-hidden"
                       placeholder="+55 (11) 99999-9999"
                     />
@@ -452,11 +510,16 @@ export default function ConfiguracoesPage() {
                   <p className="font-label-sm text-label-sm text-on-surface-variant text-[11px] mt-1">
                     Formato internacional com DDD e prefixo.
                   </p>
+                  {errors.whatsapp?.[0] && (
+                    <p className="font-label-sm text-label-sm text-error mt-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px]">error</span>
+                      {errors.whatsapp[0]}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-4 pt-4">
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <div className="relative inline-flex items-center">
-                      <input type="hidden" name="notificar_dono" value="false" />
                       <input
                         type="checkbox"
                         name="notificar_dono"
@@ -472,7 +535,6 @@ export default function ConfiguracoesPage() {
               </div>
             </div>
 
-            {/* Redes Sociais */}
             <div className="bg-surface-container-low border border-outline-variant p-8 rounded">
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-primary">share</span>
@@ -496,7 +558,6 @@ export default function ConfiguracoesPage() {
                     />
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     Facebook
@@ -511,7 +572,6 @@ export default function ConfiguracoesPage() {
                     />
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     TikTok
@@ -526,7 +586,6 @@ export default function ConfiguracoesPage() {
                     />
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <label className="block font-label-sm text-label-sm text-primary uppercase tracking-wider">
                     Website / URL Principal
@@ -570,7 +629,6 @@ export default function ConfiguracoesPage() {
               <div className="space-y-4">
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <div className="relative inline-flex items-center">
-                    <input type="hidden" name="lembretes_ativos" value="false" />
                     <input
                       type="checkbox"
                       name="lembretes_ativos"
@@ -584,7 +642,6 @@ export default function ConfiguracoesPage() {
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <div className="relative inline-flex items-center">
-                    <input type="hidden" name="lembretes_email_ativos" value="false" />
                     <input
                       type="checkbox"
                       name="lembretes_email_ativos"
@@ -628,7 +685,6 @@ export default function ConfiguracoesPage() {
             </div>
           </section>
 
-          {/* Exceções Section */}
           <section className="col-span-12">
             <div className="bg-surface-container-low border border-outline-variant p-8 rounded">
               <div className="flex items-center justify-between mb-6">
@@ -679,10 +735,6 @@ export default function ConfiguracoesPage() {
               )}
             </div>
           </section>
-
-          {errors._form && (
-            <p className="col-span-12 font-label-sm text-label-sm text-error">{errors._form[0]}</p>
-          )}
         </form>
 
         {excessoOpen && (

@@ -11,6 +11,7 @@ interface Agendamento {
   id: string;
   cliente_nome: string;
   cliente_whatsapp: string;
+  cliente_email: string | null;
   inicio: string;
   fim: string;
   status: "confirmado" | "pendente" | "cancelado";
@@ -127,15 +128,8 @@ export default function AgendaPage() {
     + " - "
     + weekDates.dates[6].toLocaleDateString("pt-BR", { day: "numeric", month: "short", year: "numeric" });
 
-  const agora = new Date();
-  const horaAtual = agora.getHours();
-
   const horas = horarios
     ? Array.from({ length: horarios.max - horarios.min }, (_, i) => `${String(i + horarios.min).padStart(2, "0")}:00`)
-        .filter((h) => {
-          const horaNum = parseInt(h.split(":")[0]);
-          return horaNum >= horaAtual;
-        })
     : [];
 
   return (
@@ -145,6 +139,17 @@ export default function AgendaPage() {
           <div>
             <h1 className="font-headline-md text-headline-md text-on-surface">Agenda</h1>
             <p className="font-body-md text-body-md text-on-surface-variant">Visão semanal dos agendamentos</p>
+            <div className="flex gap-4 mt-2">
+              <span className="font-label-sm text-label-sm text-primary">
+                {agendamentos.filter(a => a.status === "confirmado").length} confirmados
+              </span>
+              <span className="font-label-sm text-label-sm text-tertiary">
+                {agendamentos.filter(a => a.status === "pendente").length} pendentes
+              </span>
+              <span className="font-label-sm text-label-sm text-error/70">
+                {agendamentos.filter(a => a.status === "cancelado").length} cancelados
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-stack-sm">
             <div className="flex items-center gap-2 bg-surface-container border border-outline-variant rounded px-4 py-2">

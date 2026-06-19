@@ -128,6 +128,12 @@ export function ProfissionalForm({ onClose, initialData }: ProfissionalFormProps
           name="foto_url"
           currentUrl={initialData?.foto_url}
         />
+        {errors.foto_url?.[0] && (
+          <p className="font-label-sm text-label-sm text-error mt-1 flex items-center gap-1">
+            <span className="material-symbols-outlined text-[14px]">error</span>
+            {errors.foto_url[0]}
+          </p>
+        )}
       </div>
 
       <Input
@@ -217,8 +223,20 @@ export function ProfissionalForm({ onClose, initialData }: ProfissionalFormProps
         </div>
       )}
 
-      {errors._form && (
-        <p className="font-label-sm text-label-sm text-error">{errors._form[0]}</p>
+      {Object.keys(errors).length > 0 && (
+        <div className="p-4 rounded bg-error/10 border border-error/30">
+          <p className="font-label-md text-label-md text-error flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">error</span>
+            Corrija os erros antes de salvar.
+          </p>
+          <ul className="mt-2 space-y-1">
+            {Object.entries(errors).map(([field, msgs]) => (
+              <li key={field} className="font-body-sm text-body-sm text-error/80">
+                {field === "_form" ? msgs[0] : `${field}: ${msgs[0]}`}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       <div className="flex gap-3 pt-2">

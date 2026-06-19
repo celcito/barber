@@ -47,6 +47,69 @@ npm run dev
 
 Abra [http://localhost:3000](http://localhost:3000) para ver o resultado.
 
+## Arquitetura Multi-Tenant
+
+### Relacionamento de Tabelas
+
+```
+auth.users (id = tenant_id)
+    └── saloes (id = auth.uid) -- 1 salão por usuário (via trigger)
+            └── salao_admins -- múltiplos admins por salão
+                    ├── profissionais
+                    ├── servicos
+                    ├── agendamentos
+                    └── horario_excessoes
+```
+
+### Tabela salao_admins
+
+Permite vincular múltiplos administradores a um salão:
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| id | UUID | PK |
+| salao_id | UUID | FK para saloes (tenant_id) |
+| user_id | UUID | FK para auth.users |
+| role | TEXT | 'admin' ou 'owner' |
+| criado_em | TIMESTAMPTZ | Data de criação |
+
+### Políticas RLS
+
+Todas as tabelas verificam acesso via função `is_salao_admin(salao_id)`:
+- SELECT público: apenas salões com `ativo = true`
+- INSERT/UPDATE/DELETE: apenas admins do salão
+
+## Schema do Banco
+
+### Tabelas Principais
+
+- **saloes** — informações do salão (nome, slug, whatsapp, config)
+- **salao_admins** — admins vinculados a cada salão
+- **profissionais** — profissionais do salão
+- **profissional_horarios** — horários de trabalho por dia
+- **servicos** — serviços oferecidos (corte, barba, etc.)
+- **agendamentos** — agendamentos feitos pelos clientes
+- **horario_excessoes** — exceções de horário (feriados, etc.)
+
+### Slug de Agendamento
+
+O link público de agendamento é baseado no campo `slug` da tabela `saloes`:
+- URL: `https://agendafacil.com.br/{slug}`
+- Exemplo: `https://agendafacil.com.br/barbearia-teste`
+
+O slug é único e deve conter apenas letras minúsculas, números e hífens.
+
 ## MCP Stitch
 
 A configuração do MCP do Google Stitch (para design de screens via IA) está em `~/.config/opencode/opencode.jsonc`. É um MCP remoto que aponta para `https://stitch.googleapis.com/mcp` e requer a variável de ambiente `GOOGLE_STITCH_API_KEY` com a chave da API.
+
+## Setup do banco (Supabase)
+
+```bash
+supabase login
+supabase link --project-ref tlggkdrlijxxvnpaokrc
+supabase db push
+node scripts/seed.mjs
+```
+
+Mais detalhes em `IMPLANTACAO_SUPABASE.md`.
