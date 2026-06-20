@@ -7,6 +7,13 @@ export async function getAgendamentosSemana(dataInicio: string, profissionalId?:
   const { supabase, user } = await getAuthUser();
   if (!user) redirect("/login");
 
+  await supabase
+    .from("agendamentos")
+    .update({ status: "atendido" })
+    .eq("salao_id", user.id)
+    .in("status", ["confirmado", "pendente"])
+    .lt("fim", new Date().toISOString());
+
   const inicio = new Date(dataInicio);
   const fim = new Date(inicio);
   fim.setDate(fim.getDate() + 7);

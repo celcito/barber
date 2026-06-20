@@ -14,7 +14,7 @@ interface Agendamento {
   cliente_email: string | null;
   inicio: string;
   fim: string;
-  status: "confirmado" | "pendente" | "cancelado";
+  status: "confirmado" | "pendente" | "cancelado" | "atendido";
   profissional_id: string | null;
   servicos: { nome: string; preco: number; duracao_min: number } | null;
   profissionais: { nome: string } | null;
@@ -149,6 +149,9 @@ export default function AgendaPage() {
               <span className="font-label-sm text-label-sm text-error/70">
                 {agendamentos.filter(a => a.status === "cancelado").length} cancelados
               </span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant/60">
+                {agendamentos.filter(a => a.status === "atendido").length} atendidos
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-stack-sm">
@@ -238,28 +241,37 @@ export default function AgendaPage() {
                     });
                     return (
                       <div key={di} className="col-span-1 min-h-[60px] py-1">
-                        {ags.map((ag) => (
+                        {ags.map((ag) => {
+                          const isPast = ag.status === "atendido";
+                          return (
                           <button
                             key={ag.id}
                             onClick={() => handleSelectAgendamento(ag)}
-                            className="w-full text-left p-2 rounded mb-1 transition-all duration-300 hover:scale-[1.02]"
+                            className={`w-full text-left p-2 rounded mb-1 transition-all duration-300 hover:scale-[1.02] ${
+                              isPast ? "opacity-55 saturate-50" : ""
+                            }`}
                             style={{
                               backgroundColor:
                                 ag.status === "cancelado" ? "rgba(255, 180, 171, 0.2)" :
+                                ag.status === "atendido" ? "rgba(121, 116, 126, 0.15)" :
                                 ag.status === "pendente" ? "rgba(233, 193, 118, 0.2)" :
                                 "rgba(233, 193, 118, 0.3)",
                               borderLeft: `3px solid ${
                                 ag.status === "cancelado" ? "#ffb4ab" :
+                                ag.status === "atendido" ? "#79747e" :
                                 ag.status === "pendente" ? "#e9c176" :
                                 "#e9c176"
                               }`,
                             }}
                           >
-                            <p className="font-label-sm text-label-sm text-on-surface font-medium truncate">
+                            <p className={`font-label-sm text-label-sm font-medium truncate ${
+                              isPast ? "text-on-surface-variant" : "text-on-surface"
+                            }`}>
                               {formatTime(ag.inicio)} - {ag.cliente_nome}
                             </p>
                           </button>
-                        ))}
+                          );
+                        })}
                       </div>
                     );
                   })}

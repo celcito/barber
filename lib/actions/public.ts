@@ -63,7 +63,7 @@ export async function getProfissionaisPublic(salaoId: string) {
 
   const { data } = await supabase
     .from("profissionais")
-    .select("id, nome")
+    .select("id, nome, foto_url")
     .eq("salao_id", parsed.data)
     .eq("ativo", true)
     .order("nome");

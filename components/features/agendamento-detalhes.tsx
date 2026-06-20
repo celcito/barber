@@ -15,7 +15,7 @@ interface AgendamentoDetalhesProps {
     cliente_email: string | null;
     inicio: string;
     fim: string;
-    status: "confirmado" | "pendente" | "cancelado";
+    status: "confirmado" | "pendente" | "cancelado" | "atendido";
     servicos: { nome: string; preco: number; duracao_min: number } | null;
     profissionais: { nome: string } | null;
   };
@@ -57,7 +57,8 @@ export function AgendamentoDetalhes({ agendamento, onClose }: AgendamentoDetalhe
       <div className="text-center">
         <Badge variant={agendamento.status}>
           {agendamento.status === "confirmado" ? "Confirmado" :
-           agendamento.status === "pendente" ? "Pendente" : "Cancelado"}
+           agendamento.status === "pendente" ? "Pendente" :
+           agendamento.status === "atendido" ? "Atendido" : "Cancelado"}
         </Badge>
       </div>
 
@@ -152,7 +153,7 @@ export function AgendamentoDetalhes({ agendamento, onClose }: AgendamentoDetalhe
           </a>
         )}
 
-        {agendamento.status !== "cancelado" && (
+        {agendamento.status !== "cancelado" && agendamento.status !== "atendido" && (
           <>
             {confirmCancel ? (
               <div className="space-y-3 p-4 rounded bg-error/10 border border-error/30">

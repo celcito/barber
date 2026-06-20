@@ -155,7 +155,7 @@ export interface Database {
           cliente_email: string | null;
           inicio: string;
           fim: string;
-          status: "confirmado" | "pendente" | "cancelado";
+          status: "confirmado" | "pendente" | "cancelado" | "atendido";
           lembrete_enviado: boolean;
           criado_em: string;
         };
@@ -169,7 +169,7 @@ export interface Database {
           cliente_email?: string | null;
           inicio: string;
           fim: string;
-          status?: "confirmado" | "pendente" | "cancelado";
+          status?: "confirmado" | "pendente" | "cancelado" | "atendido";
           lembrete_enviado?: boolean;
           criado_em?: string;
         };
@@ -183,7 +183,7 @@ export interface Database {
           cliente_email?: string | null;
           inicio?: string;
           fim?: string;
-          status?: "confirmado" | "pendente" | "cancelado";
+          status?: "confirmado" | "pendente" | "cancelado" | "atendido";
           lembrete_enviado?: boolean;
           criado_em?: string;
         };
@@ -192,7 +192,7 @@ export interface Database {
     Views: {};
     Functions: {};
     Enums: {
-      agendamento_status: "confirmado" | "pendente" | "cancelado";
+      agendamento_status: "confirmado" | "pendente" | "cancelado" | "atendido";
     };
   };
 }

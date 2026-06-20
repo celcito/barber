@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type BadgeVariant = "confirmado" | "pendente" | "cancelado" | "default";
+type BadgeVariant = "confirmado" | "pendente" | "cancelado" | "atendido" | "default";
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -10,6 +10,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   confirmado: "bg-primary/10 text-primary border border-primary/20",
   pendente: "bg-tertiary-container/10 text-tertiary border border-tertiary/20",
   cancelado: "bg-error/10 text-error border border-error/20",
+  atendido: "bg-surface-variant/40 text-on-surface-variant/60 border border-outline-variant",
   default: "bg-surface-variant text-on-surface-variant border border-outline-variant",
 };
 
